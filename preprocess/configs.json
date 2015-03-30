@@ -1,0 +1,12 @@
+{
+  "database":"weibo",
+  "username":"postgres",
+  "password":"postgres",
+  "host":"localhost",
+  "port": 5432,
+  "dialect": "postgres",
+  "logging": false,
+  "force": true,
+  "maxConcurrentQueries": 10000,
+  "limit": 5000
+}
