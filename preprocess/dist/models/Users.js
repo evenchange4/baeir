@@ -15,7 +15,7 @@ module.exports = function (sequelize, Sequelize) {
     // Tweet 的數量越多同樣也是代表這個 User 在平台上的活躍程 度以及帳號時間長度。
     tweet_counts: {
       type: Sequelize.INTEGER,
-      defaultValue: 1
+      defaultValue: 0
     },
     retweet_counts: {
       type: Sequelize.INTEGER,

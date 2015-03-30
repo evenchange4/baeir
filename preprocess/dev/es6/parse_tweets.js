@@ -1,9 +1,12 @@
+"use strict";
+
 // node_modules
 import LineByLineReader from "line-by-line";
+import Promise from "bluebird";
 
 // self project
 import $sequelize from "../libs/sequelize";
-import $configs from "../../configs.json";
+// import $configs from "../../configs.json";
 
 // Model Schema
 var Tweets = $sequelize.Tweets;
@@ -14,27 +17,49 @@ var filePath = process.argv[2];
 var lr = new LineByLineReader(filePath);
 
 lr.on("line", (line) => {
+
+  // 暫停，直到 lr.resume();
   lr.pause();
-
   var [ mid, retweeted_status_mid, uid, retweeted_uid, source, image, text, geo, created_at, deleted_last_seen, permission_denied ] = line.split(",");
-  console.log(mid);  
-
-  // create user
-  Users.findOrCreate({ where:{ uid } }, { tweet_counts: 1 })
-  .then ((d) =>{
-    var tweet_counts = d[0].dataValues.tweet_counts + 1;
-    if(!d[0].options.isNewRecord){
-      console.log(tweet_counts);
-
-      return Users.update({ tweet_counts }, { where: { uid } });
-    }
+  
+  Promise.resolve()
+  .then(()=>{
+    // Tweet count
+    return Users.findOrCreate({ where:{ uid }, defaults: { tweet_counts: 1 }  });
   })
   .then((d)=>{
-    return lr.resume();
+    console.log(d[0].options.isNewRecord);
+    console.log(d[0].dataValues);
+    var tweet_counts = d[0].dataValues.tweet_counts + 1;
+    if(!d[0].options.isNewRecord){
+      return Users.update({ tweet_counts }, { where: { uid } });
+    }
+  })  
+  // .then(()=>{
+  //   // retweet count
+  //   console.log(retweeted_uid);
+  //   if(retweeted_uid != ""){
+  //     return Users.findOrCreate({ where:{ uid: retweeted_uid }, defaults: { retweet_counts: 1 }  })
+  //     .then((d)=>{
+  //       console.log(d);
+  //       var retweet_counts = d[0].dataValues.retweet_counts + 1;
+  //       if(!d[0].options.isNewRecord){
+  //         Users.update({ retweet_counts }, { where: { uid: retweeted_uid } });
+  //       }
+  //     })
+  //   }
+  // })
+  .then((d)=>{
+    console.log(d);
+    console.log(1);
+    lr.resume();
   })
   .catch((error)=>{
     console.log(error);
   });
+
+
+
   // .success( (d) =>{
   //   console.log(d);
   //   console.log(d === null);

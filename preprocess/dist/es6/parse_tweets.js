@@ -8,11 +8,13 @@ var _slicedToArray = function (arr, i) { if (Array.isArray(arr)) { return arr; }
 
 var LineByLineReader = _interopRequire(require("line-by-line"));
 
+var Promise = _interopRequire(require("bluebird"));
+
 // self project
 
 var $sequelize = _interopRequire(require("../libs/sequelize"));
 
-var $configs = _interopRequire(require("../../configs.json"));
+// import $configs from "../../configs.json";
 
 // Model Schema
 var Tweets = $sequelize.Tweets;
@@ -23,6 +25,8 @@ var filePath = process.argv[2];
 var lr = new LineByLineReader(filePath);
 
 lr.on("line", function (line) {
+
+  // 暫停，直到 lr.resume();
   lr.pause();
 
   var _line$split = line.split(",");
@@ -41,21 +45,41 @@ lr.on("line", function (line) {
   var deleted_last_seen = _line$split2[9];
   var permission_denied = _line$split2[10];
 
-  console.log(mid);
-
-  // create user
-  Users.findOrCreate({ where: { uid: uid } }, { tweet_counts: 1 }).then(function (d) {
+  Promise.resolve().then(function () {
+    // Tweet count
+    return Users.findOrCreate({ where: { uid: uid }, defaults: { tweet_counts: 1 } });
+  }).then(function (d) {
+    console.log(d[0].options.isNewRecord);
+    console.log(d[0].dataValues);
     var tweet_counts = d[0].dataValues.tweet_counts + 1;
     if (!d[0].options.isNewRecord) {
-      console.log(tweet_counts);
-
-      return Users.update({ tweet_counts: tweet_counts }, { where: { uid: uid } });
+      Users.update({ tweet_counts: tweet_counts }, { where: { uid: uid } }).then(function () {
+        lr.resume();
+      });
     }
-  }).then(function (d) {
-    return lr.resume();
+  })
+  // .then(()=>{
+  //   // retweet count
+  //   console.log(retweeted_uid);
+  //   if(retweeted_uid != ""){
+  //     return Users.findOrCreate({ where:{ uid: retweeted_uid }, defaults: { retweet_counts: 1 }  })
+  //     .then((d)=>{
+  //       console.log(d);
+  //       var retweet_counts = d[0].dataValues.retweet_counts + 1;
+  //       if(!d[0].options.isNewRecord){
+  //         Users.update({ retweet_counts }, { where: { uid: retweeted_uid } });
+  //       }
+  //     })
+  //   }
+  // })
+  .then(function (d) {
+    console.log(d);
+    console.log(1);
+    lr.resume();
   })["catch"](function (error) {
     console.log(error);
   });
+
   // .success( (d) =>{
   //   console.log(d);
   //   console.log(d === null);
