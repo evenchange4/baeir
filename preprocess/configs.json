@@ -7,6 +7,6 @@
   "dialect": "postgres",
   "logging": false,
   "force": true,
-  "maxConcurrentQueries": 10000,
+  "maxConcurrentQueries": 5000,
   "limit": 5000
 }

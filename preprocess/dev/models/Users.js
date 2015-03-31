@@ -3,11 +3,11 @@ module.exports = function(sequelize, Sequelize){
     user_id: {
       type: Sequelize.INTEGER,
       autoIncrement: true,
-      primaryKey: true
     },
     // uid - Pseudo user ID
     uid: {
-      type: Sequelize.STRING
+      type: Sequelize.STRING,
+      primaryKey: true
     },
     // Tweets Count:
     // Tweet 的數量越多同樣也是代表這個 User 在平台上的活躍程 度以及帳號時間長度。
