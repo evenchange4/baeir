@@ -1,6 +1,11 @@
 ## Run
 
 ```
+npm i babel -g
+
+npm i
 npm run build
-node dist/es6/test.js data/sample.csv
+npm run db
+
+node dist/es6/parse_tweets data/sample.csv
 ```
