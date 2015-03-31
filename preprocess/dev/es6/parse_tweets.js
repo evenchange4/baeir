@@ -3,11 +3,9 @@
 // node_modules
 import LineByLineReader from "line-by-line";
 import Promise from "bluebird";
-import lineReader from "line-reader";
 
 // self project
 import $sequelize from "../libs/sequelize";
-// import $configs from "../../configs.json";
 
 // Model Schema
 var Tweets = $sequelize.Tweets;
@@ -15,50 +13,104 @@ var Users = $sequelize.Users;
 var Users_Tweets = $sequelize.Users_Tweets
 
 var filePath = process.argv[2];
-// var lr = new LineByLineReader(filePath, {skipEmptyLines: true });
+var lr = new LineByLineReader(filePath, {skipEmptyLines: true });
 
 // read all lines:
-lineReader.eachLine(filePath, function(line, last) {
-  var [ mid, retweeted_status_mid, uid, retweeted_uid, source, image, text, geo, created_at, deleted_last_seen, permission_denied ] = line.split(",");
+// lineReader.eachLine(filePath, function(line, last) {
+//   var [ mid, retweeted_status_mid, uid, retweeted_uid, source, image, text, geo, created_at, deleted_last_seen, permission_denied ] = line.split(",");
 
+//   Promise.resolve()
+//   .then(()=>{
+//     // Tweet count
+//     return Users.findOrCreate({ where:{ uid }, defaults: { tweet_counts: 0 }  });
+//   })
+//   // .then((d)=>{
+//   //   var tweet_counts = d[0].dataValues.tweet_counts + 1;
+//   //   if(!d[0].options.isNewRecord){
+//   //     return Users.update({ tweet_counts }, { where: { uid } });
+//   //   }
+//   // })
+//   .catch((error)=>{
+//     console.log(error);
+//   });
+
+//   // console.log(last);  
+
+//   // if (/* done */) {
+//   //   return false; // stop reading
+//   // }
+// });
+
+lr.on("line", (line) => {
+
+  var [ mid, retweeted_status_mid, uid, retweeted_uid, source, image, text, geo, created_at, deleted_last_seen, permission_denied ] = line.split(",");
+  
+  /**
+  * 初始化 Users 列表
+  *
+  * @param  {string} uid
+  * @return {int} tweet_counts: 0
+  *
+  * @author Michael Hsu
+  */
   Promise.resolve()
   .then(()=>{
     // Tweet count
-    return Users.findOrCreate({ where:{ uid }, defaults: { tweet_counts: 1 }  });
+    return Users.findOrCreate({ where:{ uid }, defaults: { tweet_counts: 0 } });
   })
-  // .then((d)=>{
-  //   var tweet_counts = d[0].dataValues.tweet_counts + 1;
-  //   if(!d[0].options.isNewRecord){
-  //     return Users.update({ tweet_counts }, { where: { uid } });
-  //   }
-  // })
   .catch((error)=>{
     console.log(error);
   });
 
-  // console.log(last);  
 
-  // if (/* done */) {
-  //   return false; // stop reading
-  // }
-});
+  /**
+  * 初始化 Tweets 列表
+  *
+  * @param  {string} uid
+  * @return {int} text_length 
+  * @return {int} url_counts
+  * @return {int} retweet_counts
+  *
+  * @author Michael Hsu
+  */
+  var mention_counts = 0;
+  var url_counts = 0;
+  var retweet_counts = 0;
 
-// lr.on("line", (line) => {
+
+  Promise.resolve()
+  .then(()=>{
+    // mention_counts = 
+  })
+  .then(()=>{
+    return Tweets.create({
+      mid,
+      retweeted_status_mid,
+      uid,
+      retweeted_uid,
+      source,
+      image,
+      text,
+      text_length: text.length,
+      mention_counts: 1,
+      url_counts: 1,
+      retweet_counts: 1,
+      geo,
+      created_at: new Date(created_at).getTime() || null,
+      deleted_last_seen: new Date(deleted_last_seen).getTime() || null,
+      permission_denied
+    });
+  })
+  .then((d)=>{
+    // console.log(d);
+  })
+  .catch((error)=>{
+    console.log(error);
+  });
+
 
 //   // 暫停，直到 lr.resume();
 //   lr.pause();
-//   var [ mid, retweeted_status_mid, uid, retweeted_uid, source, image, text, geo, created_at, deleted_last_seen, permission_denied ] = line.split(",");
-
-//   setTimeout(()=>{
-//     console.log(mid);
-//     // lr.pause();
-//     setTimeout(()=>{
-//       console.log(2);
-//       lr.resume();
-//     }, 1000);
-//   }, 1000);
-
-  // var [ mid, retweeted_status_mid, uid, retweeted_uid, source, image, text, geo, created_at, deleted_last_seen, permission_denied ] = line.split(",");
 
   // Users.find({ where:{ uid } })
   // .then((d)=>{
@@ -144,28 +196,6 @@ lineReader.eachLine(filePath, function(line, last) {
   //   console.log(error);
   // });
 
-  // create tweet
 
-  // Tweets.create({
-  //   mid,
-  //   retweeted_status_mid,
-  //   uid,
-  //   retweeted_uid,
-  //   source,
-  //   image,
-  //   text,
-  //   text_length,
-  //   geo,
-  //   created_at,
-  //   deleted_last_seen,
-  //   permission_denied
-  // })
-  // .success( ()=> {
-  //   console.log(123);
-  // })
-  // .error( (d) => {
-  //   console.log(d);    
-  // });  
-
-// });
+});
 

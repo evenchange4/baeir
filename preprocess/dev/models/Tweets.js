@@ -2,12 +2,12 @@ module.exports = function(sequelize, Sequelize){
   return sequelize.define('Tweets', {
     tweet_id: {
       type: Sequelize.INTEGER,
-      autoIncrement: true,
-      primaryKey: true
+      autoIncrement: true
     },
     // mid - Unique pseudo message ID
     mid: {
       type: Sequelize.STRING,
+      primaryKey: true
     },
     // retweeted_status_mid - original message
     // Only available if the row of interest is a retweet
@@ -54,12 +54,12 @@ module.exports = function(sequelize, Sequelize){
     },
     // created_at - Original posting time
     created_at: {
-      type: Sequelize.BIGINT,
+      type: Sequelize.DATE,
       allowNull: true
     },
     // deleted_last_seen - The last seen time before this message was missing from the user timeline
     deleted_last_seen: {
-      type: Sequelize.BIGINT,
+      type: Sequelize.DATE,
       allowNull: true
     },
     //  message was found missing in the timeline and the API return message was 'permission denied'
