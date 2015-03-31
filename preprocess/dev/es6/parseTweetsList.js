@@ -9,8 +9,6 @@ import $sequelize from "../libs/sequelize";
 
 // Model Schema
 var Tweets = $sequelize.Tweets;
-var Users = $sequelize.Users;
-var Users_Tweets = $sequelize.Users_Tweets
 
 var filePath = process.argv[2];
 var lr = new LineByLineReader(filePath, {skipEmptyLines: true });
@@ -21,13 +19,17 @@ lr.on("line", (line) => {
   /**
   * 初始化 Tweets 列表
   *
-  * @param  {string} uid
+  * @param  {string} mid, uid, ...
+  *
   * @return {int} text_length 
+  * @return {int} mention_counts
   * @return {int} url_counts
-  * @return {int} retweet_counts
+  * @return {date} created_at
+  * @return {date} deleted_last_seen
   *
   * @author Michael Hsu
   */
+
   var req1 = /@(\S){8,9}：/g;  // example: "@uMLLV3ZCO：", "@uMLLV3ZO："
   var req2 = /@ukn：/g;        // example: "@ukn："
   var req3 = /http(s)*:\/\//g; // example: "http://", "https://"
