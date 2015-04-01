@@ -19,6 +19,10 @@ module.exports = function(sequelize, Sequelize){
       type: Sequelize.INTEGER,
       defaultValue: 0
     },
+    retweeted_counts: {
+      type: Sequelize.INTEGER,
+      defaultValue: 0
+    },
     // Mention Count: 曾經提到別人的數量。
     mention_counts: {
       type: Sequelize.INTEGER,

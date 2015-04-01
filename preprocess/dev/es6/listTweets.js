@@ -33,6 +33,7 @@ lr.on("line", (line) => {
   var req1 = /@(\S){8,9}：/g;  // example: "@uMLLV3ZCO：", "@uMLLV3ZO："
   var req2 = /@ukn：/g;        // example: "@ukn："
   var req3 = /http(s)*:\/\//g; // example: "http://", "https://"
+  var req4 = /POINT\((.)*\)/g; // example: "POINT(121.62397 31.10708)"
 
   Promise.resolve()
   .then(()=>{
@@ -47,7 +48,7 @@ lr.on("line", (line) => {
       text_length: text.length,
       mention_counts: (text.match(req1) || []).length + (text.match(req2) || []).length,
       url_counts: (text.match(req3) || []).length,
-      geo,
+      geo: geo.match(req4) ? geo : "",
       created_at: new Date(created_at).getTime() || null,
       deleted_last_seen: new Date(deleted_last_seen).getTime() || null,
       permission_denied
