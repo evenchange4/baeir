@@ -27,10 +27,13 @@ lr.on("line", (line) => {
   */
   Promise.resolve()
   .then(()=>{
-    return Users.findOrCreate({ where:{ uid }, defaults: { tweet_counts: 0 } });
+    return Users.create({ uid , tweet_counts: 0 });
   })
   .catch((error)=>{
-    console.log(error);
+    if (error.errors[0].message !== "uid must be unique") {
+      console.log({line});
+      console.log(error);
+    };
   });
 
 });

@@ -39,6 +39,7 @@ lr.on("line", (line) => {
   .then(()=>{
     return Tweets.create({
       mid,
+      isRetweeted: retweeted_status_mid ? true : false,
       retweeted_status_mid,
       uid,
       retweeted_uid,
@@ -58,7 +59,10 @@ lr.on("line", (line) => {
     // console.log(d);
   })
   .catch((error)=>{
-    console.log(error);
+    if (error.errors[0].message !== "mid must be unique") {
+      console.log({line});
+      console.log(error);
+    };
   });
 
 });

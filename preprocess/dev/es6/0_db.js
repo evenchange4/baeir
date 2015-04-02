@@ -1,3 +1,5 @@
+"use strict";
+
 // self project
 import $sequelize from "../libs/sequelize";
 import $configs from "../../configs.json";
@@ -13,6 +15,8 @@ import $configs from "../../configs.json";
 
 var tablesList = ["Tweets", "Users", "Users_Tweets"];
 
-$sequelize.sync(tablesList).then((msg) =>{
+$sequelize
+.sync(tablesList)
+.then((msg) =>{
   console.log(msg);
 });

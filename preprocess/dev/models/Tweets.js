@@ -9,6 +9,9 @@ module.exports = function(sequelize, Sequelize){
       type: Sequelize.STRING,
       primaryKey: true
     },
+    isRetweeted: {
+      type: Sequelize.BOOLEAN
+    },
     // retweeted_status_mid - original message
     // Only available if the row of interest is a retweet
     retweeted_status_mid: {
