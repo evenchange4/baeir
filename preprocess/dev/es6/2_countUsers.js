@@ -41,7 +41,6 @@ lr.on("line", (line) => {
     return Users.find({ where:{ uid } });
   })
   .then((user)=>{
-    var x = mention_list.length + (text.match(req2) || []).length;
     if (retweeted_status_mid === ""){
       return user.increment({ 
         tweet_counts: 1,
@@ -56,6 +55,7 @@ lr.on("line", (line) => {
     }
   })
   .catch((error)=>{
+    console.log({line});
     console.log(error);
   });
 
@@ -77,6 +77,7 @@ lr.on("line", (line) => {
     return user[0].increment({ retweeted_counts: 1 });
   })
   .catch((error)=>{
+    console.log({line});
     console.log(error);
   });
 
@@ -101,6 +102,7 @@ lr.on("line", (line) => {
     return user[0].increment({ mentioned_counts: 1 });
   })
   .catch((error)=>{
+    console.log({line});
     console.log(error);
   });
 

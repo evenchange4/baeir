@@ -59,7 +59,7 @@ lr.on("line", (line) => {
     // console.log(d);
   })
   .catch((error)=>{
-    if (error.errors[0].message !== "mid must be unique") {
+    if (typeof(error.errors) === 'undefined') {
       console.log({line});
       console.log(error);
     };

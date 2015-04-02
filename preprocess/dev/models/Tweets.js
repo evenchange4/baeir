@@ -47,7 +47,7 @@ module.exports = function(sequelize, Sequelize){
       type: Sequelize.INTEGER,
       defaultValue: 0
     },
-    retweet_counts:{
+    retweeted_counts:{
       type: Sequelize.INTEGER,
       defaultValue: 0
     },    
