@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "clean": "rm -rf dist/*",
     "build": "babel dev --out-dir dist",
-    "db": "node dist/es6/db.js"
+    "db": "node dist/es6/0_db.js"
   },
   "author": "",
   "license": "ISC",
