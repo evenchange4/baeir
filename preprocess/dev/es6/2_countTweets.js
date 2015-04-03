@@ -33,12 +33,11 @@ lr.on("line", (line) => {
     return Tweets.find({ where:{ mid: retweeted_status_mid } });
   })
   .then((tweet)=>{
-    console.log(tweet);
     return tweet.increment({ retweeted_counts: 1 });
   })
   .catch((error)=>{
-    console.log({line});
-    console.log(error);
+    // console.log({line});
+    // console.log(error);
   });
 
 });

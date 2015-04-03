@@ -30,10 +30,10 @@ lr.on("line", (line) => {
     return Users.create({ uid , tweet_counts: 0 });
   })
   .catch((error)=>{
-    if (typeof(error.errors) === 'undefined') {
-      console.log({line});
-      console.log(error);
-    };
+    // if (typeof(error.errors) === 'undefined') {
+    //   console.log({line});
+    //   console.log(error);
+    // };
   });
 
 });

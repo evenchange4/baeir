@@ -59,10 +59,10 @@ lr.on("line", (line) => {
     // console.log(d);
   })
   .catch((error)=>{
-    if (typeof(error.errors) === 'undefined') {
-      console.log({line});
-      console.log(error);
-    };
+    // if (typeof(error.errors) === 'undefined') {
+    //   console.log({line});
+    //   console.log(error);
+    // };
   });
 
 });
