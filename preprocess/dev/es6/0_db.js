@@ -1,8 +1,7 @@
 "use strict";
 
-// self project
+// self project modules
 import $sequelize from "../libs/sequelize";
-import $configs from "../../configs.json";
 
 /**
 * 同步資料庫
@@ -13,7 +12,16 @@ import $configs from "../../configs.json";
 * @author Michael Hsu
 */
 
-var tablesList = ["Tweets", "Users", "Users_Tweets"];
+// var tablesList = ["Users_Users"];
+var tablesList = [
+  "Tweets", 
+  "Users", 
+  "Expressions",
+  "Topics",
+  "Relation_Mention", 
+  "Relation_Retweet",
+  "Relation_Users_Tweets",
+  ];
 
 $sequelize
 .sync(tablesList)

@@ -4,18 +4,18 @@
 import LineByLineReader from "line-by-line";
 import Promise from "bluebird";
 
-// self project
+// self project modules
 import $sequelize from "../libs/sequelize";
 
 // Model Schema
-var Tweets = $sequelize.Tweets;
-// var Users_Tweets = $sequelize.Users_Tweets;
+const Tweets = $sequelize.Tweets;
 
-var filePath = process.argv[2];
-var lr = new LineByLineReader(filePath, {skipEmptyLines: true });
+// parse file
+const filePath = process.argv[2];
+const lr = new LineByLineReader(filePath, {skipEmptyLines: true });
 
 lr.on("line", (line) => {
-  var [ mid, retweeted_status_mid, uid, retweeted_uid, source, image, text, geo, created_at, deleted_last_seen, permission_denied ] = line.split(",");
+  let [ mid, retweeted_status_mid, uid, retweeted_uid, source, image, text, geo, created_at, deleted_last_seen, permission_denied ] = line.split(",");
     
 
   /**

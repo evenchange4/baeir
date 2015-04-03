@@ -1,9 +1,5 @@
 module.exports = function(sequelize, Sequelize){
   return sequelize.define('Users', {
-    user_id: {
-      type: Sequelize.INTEGER,
-      autoIncrement: true,
-    },
     // uid - Pseudo user ID
     uid: {
       type: Sequelize.STRING,
@@ -30,6 +26,26 @@ module.exports = function(sequelize, Sequelize){
     },
     // Mention Count: 曾經被提及的數量。
     mentioned_counts: {
+      type: Sequelize.INTEGER,
+      defaultValue: 0
+    },
+    // 可能是  點評 或 音樂
+    url_counts:{
+      type: Sequelize.INTEGER,
+      defaultValue: 0
+    },
+    // 表情 ex: [崩潰]
+    expression_counts:{
+      type: Sequelize.INTEGER,
+      defaultValue: 0
+    },
+    // 話題 ex: #終極一班#
+    topic_counts:{
+      type: Sequelize.INTEGER,
+      defaultValue: 0
+    },
+    // 話題 ex: #終極一班#
+    geo_counts:{
       type: Sequelize.INTEGER,
       defaultValue: 0
     }

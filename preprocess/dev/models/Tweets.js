@@ -1,15 +1,11 @@
 module.exports = function(sequelize, Sequelize){
   return sequelize.define('Tweets', {
-    tweet_id: {
-      type: Sequelize.INTEGER,
-      autoIncrement: true
-    },
     // mid - Unique pseudo message ID
     mid: {
       type: Sequelize.STRING,
       primaryKey: true
     },
-    isRetweeted: {
+    isOriginal: {
       type: Sequelize.BOOLEAN
     },
     // retweeted_status_mid - original message
@@ -43,7 +39,18 @@ module.exports = function(sequelize, Sequelize){
       type: Sequelize.INTEGER,
       defaultValue: 0
     },
+    // 可能是  點評 或 音樂
     url_counts:{
+      type: Sequelize.INTEGER,
+      defaultValue: 0
+    },
+    // 表情 ex: [崩潰]
+    expression_counts:{
+      type: Sequelize.INTEGER,
+      defaultValue: 0
+    },
+    // 話題 ex: #終極一班#
+    topic_counts:{
       type: Sequelize.INTEGER,
       defaultValue: 0
     },
@@ -54,6 +61,9 @@ module.exports = function(sequelize, Sequelize){
     // GIS
     geo: {
       type: Sequelize.TEXT
+    },
+    isgeo: {
+      type: Sequelize.BOOLEAN
     },
     // created_at - Original posting time
     created_at: {

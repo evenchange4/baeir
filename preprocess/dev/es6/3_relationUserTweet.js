@@ -8,7 +8,7 @@ import Promise from "bluebird";
 import $sequelize from "../libs/sequelize";
 
 // Model Schema
-const Users = $sequelize.Users;
+const Relation_Users_Tweets = $sequelize.Relation_Users_Tweets;
 
 // parse file
 const filePath = process.argv[2];
@@ -18,17 +18,19 @@ lr.on("line", (line) => {
   let [ mid, retweeted_status_mid, uid, retweeted_uid, source, image, text, geo, created_at, deleted_last_seen, permission_denied ] = line.split(",");
   
   /**
-  * 初始化 Users 列表
+  * 建構 Relation User / Tweet
   *
+  * @param  {string} mid
   * @param  {string} uid
   *
-  * @return {int} tweet_counts: 0
+  * @return relation
   *
   * @author Michael Hsu
   */
+
   Promise.resolve()
   .then(()=>{
-    return Users.create({ uid , tweet_counts: 0 });
+    return Relation_Users_Tweets.create({ mid, uid });
   })
   .catch((error)=>{
     // console.log({line});
