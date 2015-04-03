@@ -29,6 +29,10 @@ npm run build
 npm run db
 ```
 
+## Preprocess Flow
+
+![Preprocess flow](/image/Preprocess flow.png)
+
 ## Step 1: Separate Datasets
 
 ```
@@ -41,7 +45,7 @@ time node --max-old-space-size=12192 dist/es6/1_separateDataset.js data/week50.c
 time node --max-old-space-size=12192 dist/es6/2_imbalanceCheck.js
 ```
 
-## Step 3: List / Relation
+## Step 3: Extract List / Relation
 
 1. 初始化 Expressions 列表
 2. 初始化 Topics 列表
@@ -52,7 +56,7 @@ time node --max-old-space-size=12192 dist/es6/2_imbalanceCheck.js
 time node --max-old-space-size=12192 dist/es6/3_list.js
 ```
 
-## Step 4: Count feature
+## Step 4: Count feature number
 
 1. 計算 tweet_counts   自己的文章數量（原創文章）
 1. 計算 retweet_counts 自己轉錄過多少文章
