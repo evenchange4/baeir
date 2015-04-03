@@ -15,6 +15,8 @@ import $sequelize from "../libs/sequelize";
 // var tablesList = ["Users_Users"];
 var tablesList = [
   "Tweets", 
+  "Tweets_Trains", 
+  "Tweets_Tests", 
   "Users", 
   "Expressions",
   "Topics",
