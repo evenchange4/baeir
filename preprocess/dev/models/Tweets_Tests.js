@@ -5,6 +5,9 @@ module.exports = function(sequelize, Sequelize){
       type: Sequelize.STRING,
       primaryKey: true
     },
+    uid: {
+      type: Sequelize.STRING,
+    },
     isOriginal: {
       type: Sequelize.BOOLEAN
     },

@@ -1,7 +1,6 @@
 "use strict";
 
 // node_modules
-import LineByLineReader from "line-by-line";
 import Promise from "bluebird";
 
 // self project modules
@@ -9,15 +8,37 @@ import $sequelize from "../libs/sequelize";
 import * as $regex from "../libs/regex";
 
 // Model Schema
+const Tweets_Trains = $sequelize.Tweets_Trains;
 const Users = $sequelize.Users;
 
-// parse file
-const filePath = process.argv[2];
-const lr = new LineByLineReader(filePath, {skipEmptyLines: true });
+/**
+* 1. 計算 tweet_counts   自己的文章數量（原創文章）
+* 1. 計算 retweet_counts 自己轉錄過多少文章
+* 1. 計算 mention_counts 自己提到多少人
+* 2. 計算 retweeted_counts  被人轉發數量
+* 3. 計算 mentioned_counts  被人提及多少次
+* 4. 計算 retweeted_counts  被轉錄多少次
+*
+* @author Michael Hsu
+*/
 
-lr.on("line", (line) => {
-  let [ mid, retweeted_status_mid, uid, retweeted_uid, source, image, text, geo, created_at, deleted_last_seen, permission_denied ] = line.split(",");
-  
+Promise.resolve()
+.then(()=>{
+  return Tweets_Trains.findAll({
+    where: {}, 
+    attributes:[ "retweeted_status_mid", "retweeted_uid", "uid", "text", "isOriginal", "isgeo" ] 
+  });
+})
+.map((tweet)=>{
+  let retweeted_status_mid = tweet.dataValues.retweeted_status_mid;
+  let uid = tweet.dataValues.uid;
+  let text = tweet.dataValues.text;
+  let isOriginal = tweet.dataValues.isOriginal;
+  let isgeo = tweet.dataValues.isgeo;
+  let retweeted_uid = tweet.dataValues.retweeted_uid;
+
+  let mentionList = text.match($regex.mention) || [];
+
   /**
   * 計算 tweet_counts   自己的文章數量（原創文章）
   * 計算 retweet_counts 自己轉錄過多少文章
@@ -31,26 +52,20 @@ lr.on("line", (line) => {
   *
   * @author Michael Hsu
   */
-  
-  let mentionList = text.match($regex.mention) || [];
 
-  Promise.resolve()
-  .then(()=>{
-    return Users.find({ where:{ uid } });
-  })
+  Users.find({ where:{ uid } })
   .then((user)=>{
     return user.increment({ 
-      tweet_counts: retweeted_status_mid ? 1 : 0,
-      retweet_counts: retweeted_status_mid ? 0 : 1,
+      tweet_counts: isOriginal ? 1 : 0,
+      retweet_counts: isOriginal ? 0 : 1,
       mention_counts: mentionList.length + (text.match($regex.mentionUkn) || []).length,
       url_counts: (text.match($regex.url) || []).length,
       expression_counts: (text.match($regex.expression) || []).length,
       topic_counts: (text.match($regex.topic) || []).length,
-      geo_counts: geo.match($regex.geo) ? 1 : 0 
+      geo_counts: isgeo ? 1 : 0 
     });
   })
   .catch((error)=>{
-    // console.log({line});
     // console.log(error);
   });
 
@@ -64,15 +79,11 @@ lr.on("line", (line) => {
   * @author Michael Hsu
   */
 
-  Promise.resolve()
-  .then(()=>{
-    return Users.findOrCreate({ where:{ uid: retweeted_uid } });
-  })
+  Users.findOrCreate({ where:{ uid: retweeted_uid } })
   .then((user)=>{
     return user[0].increment({ retweeted_counts: 1 });
   })
   .catch((error)=>{
-    // console.log({line});
     // console.log(error);
   });
 
@@ -98,9 +109,28 @@ lr.on("line", (line) => {
     return user[0].increment({ mentioned_counts: 1 });
   })
   .catch((error)=>{
-    // console.log({line});
     // console.log(error);
   });
 
-});
+  /**
+  * 計算 retweeted_counts  被轉錄多少次
+  *
+  * @param  {string} retweeted_status_mid
+  *
+  * @return {int} retweeted_counts + 1
+  *
+  * @author Michael Hsu
+  */
 
+  Tweets_Trains.find({ where:{ mid: retweeted_status_mid } })
+  .then((tweet)=>{
+    return tweet.increment({ retweeted_counts: 1 });
+  })
+  .catch((error)=>{
+    // console.log(error);
+  });
+
+})
+.catch((error)=>{
+  // console.log(error);
+});
