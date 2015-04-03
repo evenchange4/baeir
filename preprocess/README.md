@@ -1,3 +1,24 @@
+## Weibo Datasets Preprocessing
+
+- Dataset: Open Weiboscope Data Access 香港大學 http://147.8.142.179/datazip/
+
+## Configuration
+
+Edit `configs.json`
+
+```
+{
+  "database":"database",
+  "username":"username",
+  "password":"password",
+  "host":"localhost",
+  "port": 5432,
+  "dialect": "postgres",
+  "logging": false,
+  "force": false
+}
+```
+
 ## Setup environment
 
 ```
@@ -28,3 +49,7 @@ time node --max-old-space-size=12192 dist/es6/2_countUsers.js data/sample.csv
 time node --max-old-space-size=12192 dist/es6/3_relationUserTweet.js data/sample.csv
 time node --max-old-space-size=12192 dist/es6/3_relationUserUser.js data/sample.csv
 ```
+
+## Document
+
+![ER-diagram](/image/Weibo ER-diagram.png)
