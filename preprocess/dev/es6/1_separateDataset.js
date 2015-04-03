@@ -23,7 +23,7 @@ const Test_Start =  new Date("2012-12-15 00:00:00").getTime();
 const Test_End =    new Date("2012-12-16 23:59:59").getTime();
 
 lr.on("line", (line) => {
-  let [ mid, retweeted_status_mid, uid, retweeted_uid, source, image, text, geo, created_at, deleted_last_seen, permission_denied ] = line.split(",");
+  let [ mid, retweeted_status_mid, uid, retweeted_uid, source, image, text = "", geo, created_at, deleted_last_seen, permission_denied ] = line.split(",");
 
   /**
   * 初始化 Tweets_Train / Tweets_Test 列表
