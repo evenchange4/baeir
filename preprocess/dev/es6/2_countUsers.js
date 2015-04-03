@@ -32,7 +32,7 @@ lr.on("line", (line) => {
   * @author Michael Hsu
   */
   
-  var mentionList = text.match($regex.mention) || [];
+  let mentionList = text.match($regex.mention) || [];
 
   Promise.resolve()
   .then(()=>{

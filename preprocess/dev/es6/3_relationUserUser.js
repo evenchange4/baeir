@@ -6,6 +6,7 @@ import Promise from "bluebird";
 
 // self project modules
 import $sequelize from "../libs/sequelize";
+import * as $regex from "../libs/regex";
 
 // Model Schema
 const Relation_Retweet = $sequelize.Relation_Retweet;
@@ -19,31 +20,22 @@ lr.on("line", (line) => {
   let [ mid, retweeted_status_mid, uid, retweeted_uid, source, image, text, geo, created_at, deleted_last_seen, permission_denied ] = line.split(",");
   
   /**
-  * 建構 Relation User / User
+  * 建構 Relation of retweet behavior
   *
   * @param  {string} uid
   * @param  {string} retweeted_uid
   *
-  * @return {Boolean} uid1_retweet_uid2
+  * @return {Boolean} retweeted_counts + 1
   *
   * @author Michael Hsu
   */
 
   Promise.resolve()
   .then(()=>{
-    if(retweeted_uid === ""){
-      Promise.reject("not retweeted");
-    }
-    else{
-      return true;
-    }
+    return Relation_Retweet.findOrCreate({ where:{ uid, retweeted_uid } });
   })
-  .then(()=>{
-    return Users_Users.create({ 
-      uid1: uid,
-      uid2: retweeted_uid,
-      uid1_retweet_uid2: true
-    });
+  .then((user)=>{
+    return user[0].increment({ retweeted_counts: 1 });
   })
   .catch((error)=>{
     console.log({line});
@@ -51,25 +43,35 @@ lr.on("line", (line) => {
   });
 
   /**
-  * 建構 Relation User / User
+  * 建構 Relation of mention behavior
   *
   * @param  {string} uid
-  * @param  {string} retweeted_uid
+  * @param  {string} mention_uid
   *
-  * @return {Boolean} uid1_retweet_uid2
+  * @return {Boolean} mention_counts + 1
   *
   * @author Michael Hsu
   */
 
-  const regex1 = /@(\S){8,9}：/g;  // example: "@uMLLV3ZCO：", "@uMLLV3ZO："
-  
-  var mention_list = text.match(regex1) || [];
+  let mentionList = text.match($regex.mention) || [];
 
-  Promise.resolve(mention_list)
+  Promise.resolve(mentionList)
   .map((mention)=>{
-    var mentioned_uid = mention.replace(/@/,"").replace(/：/,"");
-    return Users.findOrCreate({ where:{ uid: mentioned_uid } });
+    return Relation_Mention.findOrCreate({ 
+      where:{ 
+        uid,
+        mention_uid: mention.replace(/@|：/g,""),
+      } 
+    });
   })
+  .map((user)=>{
+    return user[0].increment({ mention_counts: 1 });
+  })
+  .catch((error)=>{
+    console.log({line});
+    console.log(error);
+  });
+
 
 });
 
