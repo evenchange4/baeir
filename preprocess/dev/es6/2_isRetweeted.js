@@ -22,15 +22,10 @@ const Tweets_Tests = $sequelize.Tweets_Tests;
 Promise.resolve()
 .then(()=>{
   // 1. 找出所有 retweeted_status_mid
-  // Example: [ { retweeted_status_mid: 'mH44qG6iUm', retweeted_counts: '1' },
-  // { retweeted_status_mid: 'mRsOcOLTlc', retweeted_counts: '2' } ]
-
-  console.log(">> Start finding all ...");
   return $sequelize.sequelize.query($sql.isRetweeted, null, { raw: true } );
 })
 .then((data)=>{
-  console.log(`>> data.length = ${data.length}`);
-  console.log(">> End finding all.");
+  console.log(`>> data.length = ${data[0].length}`);
   return data[0];
 })
 .map((data)=>{
@@ -52,15 +47,11 @@ Promise.resolve()
   return Tweets_Trains.update(
     { isRetweeted: true, retweeted_counts }, 
     { where: {  mid: retweeted_status_mid } }
-  )
-  .catch((error)=>{
-    // console.log(error);
-  });
-
+  );
 })
 .then(()=>{
   console.log(">> Start async function processing ...");
 })
 .catch((error)=>{
-  // console.log(error);
+  console.log(error);
 });

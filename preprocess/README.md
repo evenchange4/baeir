@@ -55,7 +55,7 @@ time node --max-old-space-size=12192 dist/es6/1_separateDataset.js data/week50.c
 1. 計算 retweeted_counts  被轉錄多少次
 
 ```
-time node --max-old-space-size=12192 dist/es6/2_isRetweeted.js
+npm run 2
 ```
 
 ## Step 3: Check if imblanced datasets
