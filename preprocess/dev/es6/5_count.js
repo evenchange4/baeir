@@ -17,7 +17,6 @@ const Users = $sequelize.Users;
 * 1. 計算 mention_counts 自己提到多少人
 * 2. 計算 retweeted_counts  被人轉發數量
 * 3. 計算 mentioned_counts  被人提及多少次
-* 4. 計算 retweeted_counts  被轉錄多少次
 *
 * @author Michael Hsu
 */
@@ -26,11 +25,10 @@ Promise.resolve()
 .then(()=>{
   return Tweets_Trains.findAll({
     where: {}, 
-    attributes:[ "retweeted_status_mid", "retweeted_uid", "uid", "text", "isOriginal", "isgeo" ] 
+    attributes:[ "retweeted_uid", "uid", "text", "isOriginal", "isgeo" ]  
   });
 })
 .map((tweet)=>{
-  let retweeted_status_mid = tweet.dataValues.retweeted_status_mid;
   let uid = tweet.dataValues.uid;
   let text = tweet.dataValues.text;
   let isOriginal = tweet.dataValues.isOriginal;
@@ -71,6 +69,7 @@ Promise.resolve()
 
   /**
   * 計算 retweeted_counts  被人轉發數量
+  * 注意，這邊的數量有可能會跟 Tweets 算得不一樣，應為有些沒有 content
   *
   * @param  {string} retweeted_uid
   *
@@ -78,14 +77,16 @@ Promise.resolve()
   *
   * @author Michael Hsu
   */
+  if (retweeted_uid !== ""){
+    Users.findOrCreate({ where:{ uid: retweeted_uid } })
+    .then((user)=>{
+      return user[0].increment({ retweeted_counts: 1 });
+    })
+    .catch((error)=>{
+      // console.log(error);
+    });
 
-  Users.findOrCreate({ where:{ uid: retweeted_uid } })
-  .then((user)=>{
-    return user[0].increment({ retweeted_counts: 1 });
-  })
-  .catch((error)=>{
-    // console.log(error);
-  });
+  }
 
   /**
   * 計算 mentioned_counts  被人提及多少次
@@ -112,23 +113,6 @@ Promise.resolve()
     // console.log(error);
   });
 
-  /**
-  * 計算 retweeted_counts  被轉錄多少次
-  *
-  * @param  {string} retweeted_status_mid
-  *
-  * @return {int} retweeted_counts + 1
-  *
-  * @author Michael Hsu
-  */
-
-  Tweets_Trains.find({ where:{ mid: retweeted_status_mid } })
-  .then((tweet)=>{
-    return tweet.increment({ retweeted_counts: 1 });
-  })
-  .catch((error)=>{
-    // console.log(error);
-  });
 
 })
 .catch((error)=>{

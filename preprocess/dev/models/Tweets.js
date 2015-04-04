@@ -1,12 +1,30 @@
-module.exports = function(sequelize, Sequelize){
-  return sequelize.define('Tweets', {
+"use strict";
+
+module.exports = function (sequelize, Sequelize) {
+  return sequelize.define("Tweets", {
     // mid - Unique pseudo message ID
     mid: {
       type: Sequelize.STRING,
       primaryKey: true
     },
     uid: {
-      type: Sequelize.STRING,
+      type: Sequelize.STRING 
+    },
+    // ####################################
+    // Output: 是否被轉錄 
+    // #################################### 
+    isRetweeted: {
+      type: Sequelize.BOOLEAN
+    },
+
+    // ####################################
+    // Feature  
+    // ####################################
+
+    // 文章屬於原創，或是轉錄別人的
+    retweeted_counts: {
+      type: Sequelize.INTEGER,
+      defaultValue: 0
     },
     isOriginal: {
       type: Sequelize.BOOLEAN
@@ -34,33 +52,29 @@ module.exports = function(sequelize, Sequelize){
     text: {
       type: Sequelize.TEXT
     },
-    text_length:{
+    text_length: {
       type: Sequelize.INTEGER
     },
     // (@xxxx:) is replaced by either the pseudo user ID or ukn (uknown)
-    mention_counts:{
+    mention_counts: {
       type: Sequelize.INTEGER,
       defaultValue: 0
     },
     // 可能是  點評 或 音樂
-    url_counts:{
+    url_counts: {
       type: Sequelize.INTEGER,
       defaultValue: 0
     },
     // 表情 ex: [崩潰]
-    expression_counts:{
+    expression_counts: {
       type: Sequelize.INTEGER,
       defaultValue: 0
     },
     // 話題 ex: #終極一班#
-    topic_counts:{
+    topic_counts: {
       type: Sequelize.INTEGER,
       defaultValue: 0
     },
-    retweeted_counts:{
-      type: Sequelize.INTEGER,
-      defaultValue: 0
-    },    
     // GIS
     geo: {
       type: Sequelize.TEXT

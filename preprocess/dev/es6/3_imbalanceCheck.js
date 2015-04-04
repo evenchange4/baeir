@@ -26,7 +26,7 @@ const Tweets_Tests = $sequelize.Tweets_Tests;
 
 Promise.resolve()
 .then(()=>{
-  return Tweets_Trains.count({ where: { isOriginal: true }});
+  return Tweets_Trains.count({ where: { isRetweeted: true }});
 })
 .then((Train_Negative)=>{
   console.log({ Train_Negative});
@@ -37,7 +37,7 @@ Promise.resolve()
 
 Promise.resolve()
 .then(()=>{
-  return Tweets_Trains.count({ where: { isOriginal: false }});
+  return Tweets_Trains.count({ where: { isRetweeted: false }});
 })
 .then((Train_Positive)=>{
   console.log({ Train_Positive});
@@ -48,7 +48,7 @@ Promise.resolve()
 
 Promise.resolve()
 .then(()=>{
-  return Tweets_Tests.count({ where: { isOriginal: true }});
+  return Tweets_Tests.count({ where: { isRetweeted: true }});
 })
 .then((Test_Negative)=>{
   console.log({ Test_Negative});
@@ -59,7 +59,7 @@ Promise.resolve()
 
 Promise.resolve()
 .then(()=>{
-  return Tweets_Tests.count({ where: { isOriginal: false }});
+  return Tweets_Tests.count({ where: { isRetweeted: false }});
 })
 .then((Test_Positive)=>{
   console.log({ Test_Positive});

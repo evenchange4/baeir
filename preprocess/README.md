@@ -39,13 +39,22 @@ npm run db
 time node --max-old-space-size=12192 dist/es6/1_separateDataset.js data/week50.csv
 ```
 
-## Step 2: Check if imblanced datasets
+## Step 2: isRetweeted
+
+1. 是否被轉錄過 isRetweeted
+1. 計算 retweeted_counts  被轉錄多少次
 
 ```
-time node --max-old-space-size=12192 dist/es6/2_imbalanceCheck.js
+time node --max-old-space-size=12192 dist/es6/2_isRetweeted.js
 ```
 
-## Step 3: Extract List / Relation
+## Step 3: Check if imblanced datasets
+
+```
+time node --max-old-space-size=12192 dist/es6/3_imbalanceCheck.js
+```
+
+## Step 4: Extract List / Relation
 
 1. 初始化 Expressions 列表
 2. 初始化 Topics 列表
@@ -53,30 +62,28 @@ time node --max-old-space-size=12192 dist/es6/2_imbalanceCheck.js
 4. 初始化 Users 列表
 
 ```
-time node --max-old-space-size=12192 dist/es6/3_list.js
+time node --max-old-space-size=12192 dist/es6/4_list.js
 ```
 
-## Step 4: Count feature number
+## Step 5: Count feature number
 
 1. 計算 tweet_counts   自己的文章數量（原創文章）
 1. 計算 retweet_counts 自己轉錄過多少文章
 1. 計算 mention_counts 自己提到多少人
 2. 計算 retweeted_counts  被人轉發數量
 3. 計算 mentioned_counts  被人提及多少次
-4. 計算 retweeted_counts  被轉錄多少次
 
 ```
-time node --max-old-space-size=12192 dist/es6/4_count.js
+time node --max-old-space-size=12192 dist/es6/5_count.js
 ```
 
-## Step 5: Construct relation
+## Step 6: Construct relation
 
-1. 建構 Relation between User and Tweet
-2. 建構 Relation of retweet behavior
-3. 建構 Relation of mention behavior
+1. 建構 Relation of retweet behavior
+2. 建構 Relation of mention behavior
 
 ```
-time node --max-old-space-size=12192 dist/es6/5_relation.js
+time node --max-old-space-size=12192 dist/es6/6_relation.js
 ```
 
 

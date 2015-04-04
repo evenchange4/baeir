@@ -27,14 +27,15 @@ Promise.resolve()
 .then(()=>{
   return Tweets_Trains.findAll({
     where: {}, 
-    attributes:[ "mid", "uid", "text", "isOriginal" ] 
+    attributes:[ "mid", "uid", "text", "isRetweeted", "retweeted_counts" ] 
   });
 })
 .map((tweet)=>{
   let mid = tweet.dataValues.mid;
   let uid = tweet.dataValues.uid;
   let text = tweet.dataValues.text;
-  let isOriginal = tweet.dataValues.isOriginal;
+  let isRetweeted = tweet.dataValues.isRetweeted;
+  let retweeted_counts = tweet.dataValues.retweeted_counts;
 
   let expressionList = text.match($regex.expression) || [];
   let topicList = text.match($regex.topic) || [];
@@ -58,8 +59,8 @@ Promise.resolve()
     })
     .then((expression)=>{
       expression[0].increment({ 
-        tweet_counts: isOriginal ? 1 : 0,
-        retweet_counts: isOriginal ? 0 : 1
+        retweeted_counts: retweeted_counts,
+        nonretweeted_counts: isRetweeted ? 0 : 1
       });
     })
     .catch((error)=>{
@@ -86,8 +87,8 @@ Promise.resolve()
     })
     .then((topic)=>{
       topic[0].increment({ 
-        tweet_counts: isOriginal ? 1 : 0,
-        retweet_counts: isOriginal ? 0 : 1
+        retweeted_counts: retweeted_counts,
+        nonretweeted_counts: isRetweeted ? 0 : 1
       });
     })
     .catch((error)=>{
@@ -96,7 +97,7 @@ Promise.resolve()
   });
 
   /**
-  * 建構 Relation User / Tweet
+  * 建構 Relation between User and Tweet
   *
   * @param  {string} mid
   * @param  {string} uid
@@ -121,7 +122,7 @@ Promise.resolve()
   * @author Michael Hsu
   */
 
-  Users.create({ uid , tweet_counts: 0 })
+  Users.create({ uid, tweet_counts: 0 })
   .catch((error)=>{
     // console.log(error);
   });
