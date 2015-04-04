@@ -35,7 +35,7 @@ npm run db
 
 ## Step 1: Separate Datasets
 
-- Choose separate date
+- Choose separate date: 
 
 ```
 // Separate Date
@@ -61,6 +61,12 @@ time node --max-old-space-size=12192 dist/es6/2_isRetweeted.js
 ## Step 3: Check if imblanced datasets
 
 ```
+time node --max-old-space-size=12192 dist/es6/3_imbalanceCheck.js
+```
+
+- Results: 
+
+```
 Trains
 Positive: 
 Negative: 
@@ -68,10 +74,6 @@ Negative:
 Tests
 Positive: 
 Negative: 
-```
-
-```
-time node --max-old-space-size=12192 dist/es6/3_imbalanceCheck.js
 ```
 
 ## Step 4: Extract List / Relation
