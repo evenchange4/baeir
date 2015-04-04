@@ -35,6 +35,16 @@ npm run db
 
 ## Step 1: Separate Datasets
 
+- Choose separate date
+
+```
+// Separate Date
+const Train_Start = new Date("2012-12-10 20:00:00").getTime();
+const Train_End =   new Date("2012-12-10 21:59:59").getTime();
+const Test_Start =  new Date("2012-12-10 22:00:00").getTime();
+const Test_End =    new Date("2012-12-10 22:59:59").getTime();
+```
+
 ```
 time node --max-old-space-size=12192 dist/es6/1_separateDataset.js data/week50.csv
 ```
@@ -49,6 +59,16 @@ time node --max-old-space-size=12192 dist/es6/2_isRetweeted.js
 ```
 
 ## Step 3: Check if imblanced datasets
+
+```
+Trains
+Positive: 
+Negative: 
+
+Tests
+Positive: 
+Negative: 
+```
 
 ```
 time node --max-old-space-size=12192 dist/es6/3_imbalanceCheck.js
