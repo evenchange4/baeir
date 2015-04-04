@@ -35,6 +35,7 @@ npm run db
 
 ## Step 1: Separate Datasets
 
+- 初始化 Training / Testing Datasets 列表
 - Choose separate date: 
 
 ```
@@ -52,7 +53,7 @@ time node --max-old-space-size=12192 dist/es6/1_separateDataset.js data/week50.c
 ## Step 2: isRetweeted
 
 1. 是否被轉錄過 isRetweeted
-1. 計算 retweeted_counts  被轉錄多少次
+2. 計算 retweeted_counts 被轉錄多少次
 
 ```
 npm run 2
@@ -82,13 +83,15 @@ Negative:
 2. 初始化 Topics 列表
 3. 建構 Relation between User and Tweet
 4. 初始化 Users 列表
-1. 初始化 Users 列表
 2. 計算 tweet_counts   自己的文章數量（原創文章）
 3. 計算 retweet_counts 自己轉錄過多少文章
 4. 計算 mention_counts 自己提到多少人
 5. 計算 retweeted_counts  被人轉發數量
 6. 注意，這邊的數量有可能會跟 Tweets 算得不一樣，應為有些沒有 content
 7. 計算 mentioned_counts  被人提及多少次
+8. 建構 Relation of retweet behavior
+9. 建構 Relation of mention behavior
+
 ```
 npm run 4
 ```

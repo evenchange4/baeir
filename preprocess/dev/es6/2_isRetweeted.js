@@ -13,7 +13,7 @@ const Tweets_Tests = $sequelize.Tweets_Tests;
 
 /**
 * 1. 是否被轉錄過 isRetweeted
-* 1. 計算 retweeted_counts  被轉錄多少次
+* 2. 計算 retweeted_counts 被轉錄多少次
 *
 * @author Michael Hsu
 */
@@ -51,6 +51,11 @@ Promise.resolve()
 .then(()=>{
   console.log(">> Start async function processing ...");
 })
+
+// ============================================
+// Testing Datasets
+// ============================================
+
 .then(()=>{
   // 1. 找出所有 retweeted_status_mid
   return $sequelize.sequelize.query($sql.isRetweetedTests, null, { raw: true } );

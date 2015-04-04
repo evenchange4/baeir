@@ -26,9 +26,9 @@ lr.on("line", (line) => {
   let [ mid, retweeted_status_mid, uid, retweeted_uid, source, image, text = "", geo, created_at, deleted_last_seen, permission_denied ] = line.split(",");
 
   /**
-  * 初始化 Tweets_Train / Tweets_Test 列表
+  * 初始化 Training / Testing Datasets 列表
   *
-  * @param  line
+  * @param  each line of csv file
   *
   * @return {int} text_length 
   * @return {int} mention_counts
