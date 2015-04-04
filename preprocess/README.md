@@ -82,13 +82,6 @@ Negative:
 2. 初始化 Topics 列表
 3. 建構 Relation between User and Tweet
 4. 初始化 Users 列表
-
-```
-npm run 4
-```
-
-## Step 5: Count feature number
-
 1. 初始化 Users 列表
 2. 計算 tweet_counts   自己的文章數量（原創文章）
 3. 計算 retweet_counts 自己轉錄過多少文章
@@ -96,18 +89,17 @@ npm run 4
 5. 計算 retweeted_counts  被人轉發數量
 6. 注意，這邊的數量有可能會跟 Tweets 算得不一樣，應為有些沒有 content
 7. 計算 mentioned_counts  被人提及多少次
-
 ```
-npm run 5
+npm run 4
 ```
 
-## Step 6: Construct relation
+## Step 5: Construct relation
 
 1. 建構 Relation of retweet behavior
 2. 建構 Relation of mention behavior
 
 ```
-npm run 6
+npm run 5
 ```
 
 ## Document

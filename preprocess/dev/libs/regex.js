@@ -1,7 +1,7 @@
 "use strict";
 
 // example: "@uMLLV3ZCO：", "@uMLLV3ZO："
-export const mention = /@(\S){8,9}：/g;     
+export const mention = /@u(\S){7,8}：/g;     
 
 // example: "@ukn："
 export const mentionUkn = /@ukn：/g;        

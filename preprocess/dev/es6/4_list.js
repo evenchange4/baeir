@@ -14,6 +14,7 @@ const Expressions = $sequelize.Expressions;
 const Topics = $sequelize.Topics;
 const Relation_Users_Tweets = $sequelize.Relation_Users_Tweets;
 const Users = $sequelize.Users;
+const Relation_Users_Users = $sequelize.Relation_Users_Users;
 
 /**
 * 1. 初始化 Expressions 列表
@@ -31,6 +32,20 @@ const Users = $sequelize.Users;
 
 Promise.resolve()
 .then(()=>{
+  var tablesList = [
+    "Users", 
+    "Expressions",
+    "Topics",
+    "Relation_Users_Users", 
+    "Relation_Users_Tweets",
+    ];
+
+  return $sequelize.sync(tablesList);
+})
+.then((msg)=>{
+  console.log(msg);
+})
+.then(()=>{
   return Tweets_Trains.findAll({
     where: {}, 
     attributes:[ "mid", "uid", "retweeted_uid", "text", "isRetweeted", "retweeted_counts", "isOriginal", "isgeo" ] 
@@ -42,8 +57,11 @@ Promise.resolve()
   let topicMap = new Map();
   let relationList = [];
   let userMap = new Map();
+  let relation_UsersMap = new Map();
 
+  // ============================================
   // for each tweet loop
+  // ============================================
   console.log(">> For each tweet loop ...");
   
   tweets.forEach((tweet)=>{
@@ -84,7 +102,7 @@ Promise.resolve()
       });
     }
 
-    if (retweeted_uid !== ""){
+    if (!isOriginal){
       if (!userMap.has(retweeted_uid)){
         userMap.set(retweeted_uid, {
           tweet_counts: 0,
@@ -109,6 +127,34 @@ Promise.resolve()
           geo_counts: userMap.get(retweeted_uid).geo_counts,
           retweeted_counts: userMap.get(retweeted_uid).retweeted_counts + 1,
           mentioned_counts: userMap.get(retweeted_uid).mentioned_counts
+        });
+      }
+
+      let key1 = `${uid}_${retweeted_uid}`;
+      let key2 = `${retweeted_uid}_${uid}`;
+
+      if (relation_UsersMap.has(key1)){
+        relation_UsersMap.set(key1, {
+          uid1_mention_uid2: relation_UsersMap.get(key1).uid1_mention_uid2,
+          uid2_mention_uid1: relation_UsersMap.get(key1).uid2_mention_uid1,
+          uid1_retweet_uid2: relation_UsersMap.get(key1).uid1_retweet_uid2 + 1,
+          uid2_retweet_uid1: relation_UsersMap.get(key1).uid2_retweet_uid1
+        });
+      }
+      else if (relation_UsersMap.has(key2)){
+        relation_UsersMap.set(key2, {
+          uid1_mention_uid2: relation_UsersMap.get(key2).uid1_mention_uid2,
+          uid2_mention_uid1: relation_UsersMap.get(key2).uid2_mention_uid1,
+          uid1_retweet_uid2: relation_UsersMap.get(key2).uid1_retweet_uid2,
+          uid2_retweet_uid1: relation_UsersMap.get(key2).uid2_retweet_uid1 + 1
+        });
+      }
+      else{
+        relation_UsersMap.set(key1, {
+          uid1_mention_uid2: 0,
+          uid2_mention_uid1: 0,
+          uid1_retweet_uid2: 1,
+          uid2_retweet_uid1: 0
         });
       }
     }
@@ -139,6 +185,34 @@ Promise.resolve()
           geo_counts: userMap.get(mention).geo_counts,
           retweeted_counts: userMap.get(mention).retweeted_counts,
           mentioned_counts: userMap.get(mention).mentioned_counts + 1
+        });
+      }
+
+      let key1 = `${uid}_${mention}`;
+      let key2 = `${mention}_${uid}`;
+
+      if (relation_UsersMap.has(key1)){
+        relation_UsersMap.set(key1, {
+          uid1_mention_uid2: relation_UsersMap.get(key1).uid1_mention_uid2 + 1,
+          uid2_mention_uid1: relation_UsersMap.get(key1).uid2_mention_uid1,
+          uid1_retweet_uid2: relation_UsersMap.get(key1).uid1_retweet_uid2,
+          uid2_retweet_uid1: relation_UsersMap.get(key1).uid2_retweet_uid1
+        });
+      }
+      else if (relation_UsersMap.has(key2)){
+        relation_UsersMap.set(key2, {
+          uid1_mention_uid2: relation_UsersMap.get(key2).uid1_mention_uid2,
+          uid2_mention_uid1: relation_UsersMap.get(key2).uid2_mention_uid1 + 1,
+          uid1_retweet_uid2: relation_UsersMap.get(key2).uid1_retweet_uid2,
+          uid2_retweet_uid1: relation_UsersMap.get(key2).uid2_retweet_uid1
+        });
+      }
+      else{
+        relation_UsersMap.set(key1, {
+          uid1_mention_uid2: 1,
+          uid2_mention_uid1: 0,
+          uid1_retweet_uid2: 0,
+          uid2_retweet_uid1: 0
         });
       }
     });
@@ -192,12 +266,28 @@ Promise.resolve()
     });
   });
   
+  // ============================================
   // results formating
+  // ============================================
+
   console.log(">> Results formating ...");
 
   let expressionResults = [];
   let topicResults = [];
   let userResults = [];
+  let relation_UsersResults = [];
+
+  relation_UsersMap.forEach((value, key)=>{
+    let [ uid1, uid2 ] = key.split("_");
+    relation_UsersResults.push({
+      uid1,
+      uid2,
+      uid1_mention_uid2: value.uid1_mention_uid2,
+      uid2_mention_uid1: value.uid2_mention_uid1,
+      uid1_retweet_uid2: value.uid1_retweet_uid2,
+      uid2_retweet_uid1: value.uid2_retweet_uid1
+    });
+  });
 
   expressionMap.forEach((value, key)=>{
     expressionResults.push({ 
@@ -234,7 +324,8 @@ Promise.resolve()
     expressionResults, 
     topicResults,
     userResults,
-    relationList
+    relationList,
+    relation_UsersResults
   };
 })
 .then((data)=>{
@@ -301,6 +392,26 @@ Promise.resolve()
   */
 
   Users.bulkCreate(data.userResults)
+  .catch((error)=>{
+    console.log(error);
+  });
+
+  /**
+  * 建構 Relation of retweet behavior
+  * 建構 Relation of mention behavior
+  *
+  * @param  {string} uid
+  * @param  {string} mention_uid
+  * @param  {string} retweeted_uid
+  *
+  * @return {Boolean} mention_counts + 1
+  * @return {Boolean} retweeted_counts + 1
+  *
+  * @author Michael Hsu
+  */
+
+
+  Relation_Users_Users.bulkCreate(data.relation_UsersResults)
   .catch((error)=>{
     console.log(error);
   });

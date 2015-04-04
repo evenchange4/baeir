@@ -12,7 +12,6 @@ import $sequelize from "../libs/sequelize";
 * @author Michael Hsu
 */
 
-// var tablesList = ["Users_Users"];
 var tablesList = [
   "Tweets", 
   "Tweets_Trains", 
@@ -20,8 +19,7 @@ var tablesList = [
   "Users", 
   "Expressions",
   "Topics",
-  "Relation_Mention", 
-  "Relation_Retweet",
+  "Relation_Users_Users", 
   "Relation_Users_Tweets",
   ];
 

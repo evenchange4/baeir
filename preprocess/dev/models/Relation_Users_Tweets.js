@@ -1,3 +1,5 @@
+"use strict";
+
 module.exports = function(sequelize, Sequelize){
   return sequelize.define('Relation_Users_Tweets', {
     // uid - Pseudo user ID
