@@ -14,7 +14,8 @@ module.exports = function (sequelize, Sequelize) {
     // Output: 是否被轉錄 
     // #################################### 
     isRetweeted: {
-      type: Sequelize.BOOLEAN
+      type: Sequelize.BOOLEAN,
+      defaultValue: false
     },
 
     // ####################################
