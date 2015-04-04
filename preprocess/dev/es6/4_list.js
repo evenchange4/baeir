@@ -20,7 +20,12 @@ const Users = $sequelize.Users;
 * 2. 初始化 Topics 列表
 * 3. 建構 Relation between User and Tweet
 * 4. 初始化 Users 列表
-
+* 2. 計算 tweet_counts   自己的文章數量（原創文章）
+* 3. 計算 retweet_counts 自己轉錄過多少文章
+* 4. 計算 mention_counts 自己提到多少人
+* 5. 計算 retweeted_counts  被人轉發數量
+* 6. 注意，這邊的數量有可能會跟 Tweets 算得不一樣，應為有些沒有 content
+* 7. 計算 mentioned_counts  被人提及多少次
 * @author Michael Hsu
 */
 
@@ -28,7 +33,7 @@ Promise.resolve()
 .then(()=>{
   return Tweets_Trains.findAll({
     where: {}, 
-    attributes:[ "mid", "uid", "text", "isRetweeted", "retweeted_counts", "isOriginal", "isgeo" ] 
+    attributes:[ "mid", "uid", "retweeted_uid", "text", "isRetweeted", "retweeted_counts", "isOriginal", "isgeo" ] 
   });
 })
 .then((tweets)=>{
@@ -42,7 +47,7 @@ Promise.resolve()
   console.log(">> For each tweet loop ...");
   
   tweets.forEach((tweet)=>{
-    let { mid, uid, text, isRetweeted, retweeted_counts, isOriginal, isgeo } = tweet;
+    let { mid, uid, retweeted_uid, text, isRetweeted, retweeted_counts, isOriginal, isgeo } = tweet;
     
     relationList.push({ mid, uid });
 
@@ -60,7 +65,9 @@ Promise.resolve()
         url_counts: urlList.length,
         expression_counts: expressionList.length,
         topic_counts: topicList.length,
-        geo_counts: isgeo ? 1 : 0 
+        geo_counts: isgeo ? 1 : 0,
+        retweeted_counts: 0,
+        mentioned_counts: 0
       });
     }
     else{
@@ -71,10 +78,70 @@ Promise.resolve()
         url_counts: userMap.get(uid).url_counts + urlList.length,
         expression_counts: userMap.get(uid).expression_counts + expressionList.length,
         topic_counts: userMap.get(uid).topic_counts + topicList.length,
-        geo_counts: userMap.get(uid).geo_counts + isgeo ? 1 : 0 
+        geo_counts: userMap.get(uid).geo_counts + isgeo ? 1 : 0,
+        retweeted_counts: userMap.get(uid).retweeted_counts,
+        mentioned_counts: userMap.get(uid).mentioned_counts
       });
     }
 
+    if (retweeted_uid !== ""){
+      if (!userMap.has(retweeted_uid)){
+        userMap.set(retweeted_uid, {
+          tweet_counts: 0,
+          retweet_counts: 0,
+          mention_counts: 0,
+          url_counts: 0,
+          expression_counts: 0,
+          topic_counts: 0,
+          geo_counts: 0,
+          retweeted_counts: 1,
+          mentioned_counts: 0
+        });
+      }
+      else{
+        userMap.set(retweeted_uid, {
+          tweet_counts: userMap.get(retweeted_uid).tweet_counts,
+          retweet_counts: userMap.get(retweeted_uid).retweet_counts,
+          mention_counts: userMap.get(retweeted_uid).mention_counts,
+          url_counts: userMap.get(retweeted_uid).url_counts,
+          expression_counts: userMap.get(retweeted_uid).expression_counts,
+          topic_counts: userMap.get(retweeted_uid).topic_counts,
+          geo_counts: userMap.get(retweeted_uid).geo_counts,
+          retweeted_counts: userMap.get(retweeted_uid).retweeted_counts + 1,
+          mentioned_counts: userMap.get(retweeted_uid).mentioned_counts
+        });
+      }
+    }
+
+    mentionList.forEach((mention)=>{
+      mention = mention.replace(/@|：/g,"");
+      if (!userMap.has(mention)){
+        userMap.set(mention, {
+          tweet_counts: 0,
+          retweet_counts: 0,
+          mention_counts: 0,
+          url_counts: 0,
+          expression_counts: 0,
+          topic_counts: 0,
+          geo_counts: 0,
+          retweeted_counts: 0,
+          mentioned_counts: 1
+        });
+      }
+      else{
+        userMap.set(mention, {
+          tweet_counts: userMap.get(mention).tweet_counts,
+          retweet_counts: userMap.get(mention).retweet_counts,
+          mention_counts: userMap.get(mention).mention_counts,
+          url_counts: userMap.get(mention).url_counts,
+          expression_counts: userMap.get(mention).expression_counts,
+          topic_counts: userMap.get(mention).topic_counts,
+          geo_counts: userMap.get(mention).geo_counts,
+          retweeted_counts: userMap.get(mention).retweeted_counts,
+          mentioned_counts: userMap.get(mention).mentioned_counts + 1
+        });
+      }
+    });
 
     topicList.forEach((topic) => {
       topic = topic.replace(/#/g,"");
@@ -158,6 +225,8 @@ Promise.resolve()
       expression_counts: value.expression_counts,
       topic_counts: value.topic_counts,
       geo_counts: value.geo_counts,
+      retweeted_counts: value.retweeted_counts,
+      mentioned_counts: value.mentioned_counts
     });
   });
 
@@ -211,10 +280,22 @@ Promise.resolve()
 
   /**
   * 初始化 Users 列表
+  * 計算 tweet_counts   自己的文章數量（原創文章）
+  * 計算 retweet_counts 自己轉錄過多少文章
+  * 計算 mention_counts 自己提到多少人
+  * 計算 retweeted_counts  被人轉發數量
+  * 注意，這邊的數量有可能會跟 Tweets 算得不一樣，應為有些沒有 content
+  * 計算 mentioned_counts  被人提及多少次
   *
   * @param  {string} uid
+  * @param  {string} retweeted_uid
+  * @param  {array} mentionList
   *
-  * @return {int} tweet_counts: 0
+  * @return {int} tweet_counts: +1
+  * @return {int} retweet_counts: +1
+  * @return {int} mention_counts
+  * @return {int} retweet_counts: +1
+  * @return {int} mention_counts
   *
   * @author Michael Hsu
   */
