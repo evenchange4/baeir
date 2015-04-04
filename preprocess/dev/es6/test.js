@@ -1,5 +1,6 @@
 // node_modules
 import lineByLine from "line-by-line";
+require("babel/register");
 
 // self project
 import $sequelize from "../libs/sequelize";

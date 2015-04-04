@@ -8,7 +8,9 @@
     "clean": "rm -rf dist/*",
     "build": "npm run clean && babel dev --out-dir dist",
     "db": "node dist/es6/0_db.js",
-    "2": "time node --max-old-space-size=12192 dist/es6/2_isRetweeted.js"
+    "2": "time node --max-old-space-size=12192 dist/es6/2_isRetweeted.js",
+    "3": "time node --max-old-space-size=12192 dist/es6/3_imbalanceCheck.js",
+    "4": "time node --max-old-space-size=12192 dist/es6/4_list.js"
   },
   "author": "",
   "license": "ISC",

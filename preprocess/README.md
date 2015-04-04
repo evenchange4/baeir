@@ -61,7 +61,7 @@ npm run 2
 ## Step 3: Check if imblanced datasets
 
 ```
-time node --max-old-space-size=12192 dist/es6/3_imbalanceCheck.js
+npm run 3
 ```
 
 - Results: 
@@ -84,7 +84,7 @@ Negative:
 4. 初始化 Users 列表
 
 ```
-time node --max-old-space-size=12192 dist/es6/4_list.js
+npm run 4
 ```
 
 ## Step 5: Count feature number
