@@ -20,30 +20,24 @@ const Tweets_Tests = $sequelize.Tweets_Tests;
 
 Promise.resolve()
 .then(()=>{
-  
-  /**
-  * 找出所有 retweeted_status_mid 
-  *
-  * @author Michael Hsu
-  */
+  // 1. 找出所有 retweeted_status_mid
 
+  console.log(">> Start finding all ...");
+  
   return Tweets_Trains.findAll({
     where: { }, 
     attributes:[ "mid", "retweeted_status_mid", "retweeted_counts" ] 
   });
+
 })
 .then((tweets)=>{
+  // 2. 塞進 DB 前先做比較處理，減少 requests
 
-  /**
-  * 塞進 DB 前先做比較處理，減少 requests
-  *
-  * @author Michael Hsu
-  */
-
-  console.log(">> Processing training datasets...");
+  console.log(">> End finding all.");
+  console.log(">> Start formating datasets ...");
   console.log(`number = ${tweets.length}`);
 
-  // Setup two list
+  // 3. Setup two list
   let midList = [];
   let retweeted_status_midList = [];
 
@@ -52,7 +46,7 @@ Promise.resolve()
     retweeted_status_midList.push(tweet.retweeted_status_mid);
   });
 
-  // two list intersection
+  // 4. two list intersection
   let resultsObj = new Map();
 
   midList.forEach((mid) => {
@@ -68,12 +62,16 @@ Promise.resolve()
     });
   });
 
-  // example : { results: { mRsOcOLTlc: 2, mH44qG6iUm: 1 } }
+  // 5. example : { results: { mRsOcOLTlc: 2, mH44qG6iUm: 1 } }
   let resultList = [];
   resultsObj.forEach((retweeted_counts, retweeted_status_mid)=>{
     resultList.push({retweeted_status_mid, retweeted_counts});
   });
+
+  console.log(">> End formating datasets.");
+
   return resultList;
+
 })
 .map((data)=>{
 
@@ -89,48 +87,39 @@ Promise.resolve()
   * @author Michael Hsu
   */
 
-  let {retweeted_status_mid, retweeted_counts} = data
+  let {retweeted_status_mid, retweeted_counts} = data;
 
   Tweets_Trains.update(
     { isRetweeted: true, retweeted_counts }, 
     { where: {  mid: retweeted_status_mid } }
   )
   .catch((error)=>{
-    console.log(error);
+    // console.log(error);
   });
 
 })
 .then(()=>{
-  console.log(">> Training end (async function processing...)");
-})
-.catch((error)=>{
-  console.log(error);
+  console.log(">> Start async function processing...)");
 })
 .then(()=>{
-  
-  /**
-  * 找出所有 retweeted_status_mid 
-  *
-  * @author Michael Hsu
-  */
+  // 1. 找出所有 retweeted_status_mid
 
+  console.log(">> Start finding all ...");
+  
   return Tweets_Tests.findAll({
     where: { }, 
     attributes:[ "mid", "retweeted_status_mid", "retweeted_counts" ] 
   });
+
 })
 .then((tweets)=>{
+  // 2. 塞進 DB 前先做比較處理，減少 requests
 
-  /**
-  * 塞進 DB 前先做比較處理，減少 requests
-  *
-  * @author Michael Hsu
-  */
-
-  console.log(">> Processing testing datasets...");
+  console.log(">> End finding all.");
+  console.log(">> Start formating datasets ...");
   console.log(`number = ${tweets.length}`);
 
-  // Setup two list
+  // 3. Setup two list
   let midList = [];
   let retweeted_status_midList = [];
 
@@ -139,7 +128,7 @@ Promise.resolve()
     retweeted_status_midList.push(tweet.retweeted_status_mid);
   });
 
-  // two list intersection
+  // 4. two list intersection
   let resultsObj = new Map();
 
   midList.forEach((mid) => {
@@ -155,12 +144,16 @@ Promise.resolve()
     });
   });
 
-  // example : { results: { mRsOcOLTlc: 2, mH44qG6iUm: 1 } }
+  // 5. example : { results: { mRsOcOLTlc: 2, mH44qG6iUm: 1 } }
   let resultList = [];
   resultsObj.forEach((retweeted_counts, retweeted_status_mid)=>{
     resultList.push({retweeted_status_mid, retweeted_counts});
   });
+
+  console.log(">> End formating datasets.");
+
   return resultList;
+
 })
 .map((data)=>{
 
@@ -176,20 +169,20 @@ Promise.resolve()
   * @author Michael Hsu
   */
 
-  let {retweeted_status_mid, retweeted_counts} = data
+  let {retweeted_status_mid, retweeted_counts} = data;
 
   Tweets_Tests.update(
     { isRetweeted: true, retweeted_counts }, 
     { where: {  mid: retweeted_status_mid } }
   )
   .catch((error)=>{
-    console.log(error);
+    // console.log(error);
   });
 
 })
 .then(()=>{
-  console.log(">> Testing end (async function processing...)");
+  console.log(">> Start async function processing ...");
 })
 .catch((error)=>{
-  console.log(error);
+  // console.log(error);
 });
