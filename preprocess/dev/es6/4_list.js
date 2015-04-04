@@ -3,6 +3,7 @@
 // node_modules
 import Promise from "bluebird";
 require("babel/register");
+import console from "gulp-util";
 
 // self project modules
 import $sequelize from "../libs/sequelize";
@@ -332,10 +333,40 @@ Promise.resolve()
   };
 })
 .then((data)=>{
+  return new Promise((resolve, reject) => {
+    Promise.resolve()
+    .then(()=>{
+      console.log(">> start Expressions ...");
+      return Expressions.bulkCreate(data.expressionResults);
+    })
+    .then(()=>{
+      console.log(">> start Topics ...");
+      return Topics.bulkCreate(data.topicResults);
+    })
+    .then(()=>{
+      console.log(">> start Relation_Users_Tweets ...");
+      return Relation_Users_Tweets.bulkCreate(data.relationList);
+    })
+    .then(()=>{
+      console.log(">> start Users ...");
+      return Users.bulkCreate(data.userResults);
+    })
+    .then(()=>{
+      console.log(">> start Relation_Users_Users ...");
+      return Relation_Users_Users.bulkCreate(data.relation_UsersResults);
+    })
+    .then(()=>{
+      resolve("Finished.")
+    })
+    .catch((error)=>{
+      reject(error);
+    });
+  });
 
   /**
   * 初始化 Expressions 列表
   * 初始化 Topics 列表
+  * 建構 Relation between User and Tweet
   *
   * @param  {array} expressionList
   * @param  {array} topicList
@@ -346,15 +377,21 @@ Promise.resolve()
   * @author Michael Hsu
   */
 
-  Expressions.bulkCreate(data.expressionResults)
-  .catch((error)=>{
-    console.log(error);
-  });
+  // Expressions.bulkCreate(data.expressionResults)
+  // .then(()=>{
+  //   console.log(">> Finished Expressions.");
+  // })
+  // .catch((error)=>{
+  //   console.log(error);
+  // });
 
-  Topics.bulkCreate(data.topicResults)
-  .catch((error)=>{
-    console.log(error);
-  });
+  // Topics.bulkCreate(data.topicResults)
+  // .then(()=>{
+  //   console.log(">> Finished Topics.");
+  // })
+  // .catch((error)=>{
+  //   console.log(error);
+  // });
 
   /**
   * 建構 Relation between User and Tweet
@@ -367,10 +404,13 @@ Promise.resolve()
   * @author Michael Hsu
   */
 
-  Relation_Users_Tweets.bulkCreate(data.relationList)
-  .catch((error)=>{
-    console.log(error);
-  });
+  // Relation_Users_Tweets.bulkCreate(data.relationList)
+  // .then(()=>{
+  //   console.log(">> Finished Relation_Users_Tweets.");
+  // })
+  // .catch((error)=>{
+  //   console.log(error);
+  // });
 
   /**
   * 初始化 Users 列表
@@ -394,10 +434,13 @@ Promise.resolve()
   * @author Michael Hsu
   */
 
-  Users.bulkCreate(data.userResults)
-  .catch((error)=>{
-    console.log(error);
-  });
+  // Users.bulkCreate(data.userResults)
+  // .then(()=>{
+  //   console.log(">> Finished Users.");
+  // })
+  // .catch((error)=>{
+  //   console.log(error);
+  // });
 
   /**
   * 建構 Relation of retweet behavior
@@ -414,10 +457,13 @@ Promise.resolve()
   */
 
 
-  Relation_Users_Users.bulkCreate(data.relation_UsersResults)
-  .catch((error)=>{
-    console.log(error);
-  });
+  // Relation_Users_Users.bulkCreate(data.relation_UsersResults)
+  // .then(()=>{
+  //   console.log(">> Finished Relation_Users_Users.");
+  // })
+  // .catch((error)=>{
+  //   console.log(error);
+  // });
 
 })
 .then(()=>{

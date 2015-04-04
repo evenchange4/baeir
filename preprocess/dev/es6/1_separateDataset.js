@@ -3,6 +3,7 @@
 // node_modules
 import LineByLineReader from "line-by-line";
 import Promise from "bluebird";
+import console from "gulp-util";
 
 // self project modules
 import $sequelize from "../libs/sequelize";

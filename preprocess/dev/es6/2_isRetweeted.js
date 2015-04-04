@@ -2,6 +2,7 @@
 
 // node_modules
 import Promise from "bluebird";
+import console from "gulp-util";
 
 // self project modules
 import $sequelize from "../libs/sequelize";

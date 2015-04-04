@@ -2,7 +2,7 @@
 
 // self project modules
 import $sequelize from "../libs/sequelize";
-
+import console from "gulp-util";
 /**
 * 同步資料庫
 *
