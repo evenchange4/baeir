@@ -2,6 +2,7 @@
 
 // node_modules
 import Promise from "bluebird";
+require("babel/register");
 
 // self project modules
 import $sequelize from "../libs/sequelize";
@@ -30,47 +31,117 @@ Promise.resolve()
     attributes:[ "mid", "uid", "text", "isRetweeted", "retweeted_counts" ] 
   });
 })
-.map((tweet)=>{
-  let mid = tweet.dataValues.mid;
-  let uid = tweet.dataValues.uid;
-  let text = tweet.dataValues.text;
-  let isRetweeted = tweet.dataValues.isRetweeted;
-  let retweeted_counts = tweet.dataValues.retweeted_counts;
+.then((tweets)=>{
 
-  let expressionList = text.match($regex.expression) || [];
-  let topicList = text.match($regex.topic) || [];
+  let expressionMap = new Map();
+  let topicMap = new Map();
+  let relationList = [];
+  let userList = new Set();
 
-  /**
-  * 初始化 Expressions 列表
-  *
-  * @param  {array} expressionList
-  *
-  * @return {int} tweet_counts 
-  * @return {int} retweet_counts
-  *
-  * @author Michael Hsu
-  */
+  // for each tweet loop
+  console.log(">> For each tweet loop ...");
+  
+  tweets.forEach((tweet)=>{
+    let { mid, uid, text, isRetweeted, retweeted_counts } = tweet;
+    
+    userList.add(uid);
+    relationList.push({ mid, uid });
 
-  expressionList.map((expression)=>{
-    Expressions.findOrCreate({ 
-      where:{ 
-        expression: expression.replace(/\[|\]/g,"")
-      } 
-    })
-    .then((expression)=>{
-      expression[0].increment({ 
-        retweeted_counts: retweeted_counts,
-        nonretweeted_counts: isRetweeted ? 0 : 1
-      });
-    })
-    .catch((error)=>{
-      // console.log(error);
+    let expressionList = text.match($regex.expression) || [];
+    let topicList = text.match($regex.topic) || [];
+
+    topicList.forEach((topic) => {
+      topic = topic.replace(/#/g,"");
+      if(!topicMap.has(topic)) {
+        topicMap.set(topic, { 
+          retweeted_counts,
+          nonretweeted_counts: isRetweeted ? 0 : 1
+        });
+      }
+      else{
+        if(isRetweeted){
+          topicMap.set(topic, { 
+            retweeted_counts: topicMap.get(topic).retweeted_counts + retweeted_counts,
+            nonretweeted_counts: topicMap.get(topic).nonretweeted_counts + 0
+          });
+        }
+        else{
+          topicMap.set(topic, { 
+            retweeted_counts: topicMap.get(topic).retweeted_counts + retweeted_counts,
+            nonretweeted_counts: topicMap.get(topic).nonretweeted_counts + 1
+          });
+        }
+      }
+    });
+
+    expressionList.forEach((expression) => {
+      expression = expression.replace(/\[|\]/g,"");
+      if(!expressionMap.has(expression)) {
+        expressionMap.set(expression, { 
+          retweeted_counts,
+          nonretweeted_counts: isRetweeted ? 0 : 1
+        });
+      }
+      else{
+        if(isRetweeted){
+          expressionMap.set(expression, { 
+            retweeted_counts: expressionMap.get(expression).retweeted_counts + retweeted_counts,
+            nonretweeted_counts: expressionMap.get(expression).nonretweeted_counts + 0
+          });
+        }
+        else{
+          expressionMap.set(expression, { 
+            retweeted_counts: expressionMap.get(expression).retweeted_counts + retweeted_counts,
+            nonretweeted_counts: expressionMap.get(expression).nonretweeted_counts + 1
+          });
+        }
+      }
+    });
+  });
+  
+  // results formating
+  console.log(">> Results formating ...");
+
+  let expressionResults = [];
+  let topicResults = [];
+  let userResults = [];
+
+  expressionMap.forEach((value, key)=>{
+    expressionResults.push({ 
+      expression: key,
+      retweeted_counts: value.retweeted_counts,
+      nonretweeted_counts: value.nonretweeted_counts
     });
   });
 
+  topicMap.forEach((value, key)=>{
+    topicResults.push({ 
+      topic: key,
+      retweeted_counts: value.retweeted_counts,
+      nonretweeted_counts: value.nonretweeted_counts
+    });
+  });
+
+  userList.forEach((value)=>{
+    userResults.push({ 
+      uid: value
+    });
+  });
+
+  return {
+    expressionResults, 
+    topicResults,
+    userResults,
+    relationList
+  };
+})
+.then((data)=>{
+
   /**
+  * 初始化 Expressions 列表
   * 初始化 Topics 列表
   *
+  * @param  {array} expressionList
   * @param  {array} topicList
   *
   * @return {int} tweet_counts 
@@ -79,21 +150,14 @@ Promise.resolve()
   * @author Michael Hsu
   */
 
-  topicList.map((topic)=>{
-    Topics.findOrCreate({ 
-      where:{ 
-        topic: topic.replace(/#/g,"")
-      } 
-    })
-    .then((topic)=>{
-      topic[0].increment({ 
-        retweeted_counts: retweeted_counts,
-        nonretweeted_counts: isRetweeted ? 0 : 1
-      });
-    })
-    .catch((error)=>{
-      // console.log(error);
-    });
+  Expressions.bulkCreate(data.expressionResults)
+  .catch((error)=>{
+    console.log(error);
+  });
+
+  Topics.bulkCreate(data.topicResults)
+  .catch((error)=>{
+    console.log(error);
   });
 
   /**
@@ -107,9 +171,9 @@ Promise.resolve()
   * @author Michael Hsu
   */
 
-  Relation_Users_Tweets.create({ mid, uid })
+  Relation_Users_Tweets.bulkCreate(data.relationList)
   .catch((error)=>{
-    // console.log(error);
+    console.log(error);
   });
 
   /**
@@ -122,12 +186,15 @@ Promise.resolve()
   * @author Michael Hsu
   */
 
-  Users.create({ uid, tweet_counts: 0 })
+  Users.bulkCreate(data.userResults)
   .catch((error)=>{
-    // console.log(error);
+    console.log(error);
   });
 
 })
+.then(()=>{
+  console.log(">> Start async function processing ...");
+})
 .catch((error)=>{
-  // console.log(error);
+  console.log(error);
 });
