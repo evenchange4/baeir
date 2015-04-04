@@ -96,7 +96,7 @@ npm run 4
 3. 計算 mentioned_counts  被人提及多少次
 
 ```
-time node --max-old-space-size=12192 dist/es6/5_count.js
+npm run 5
 ```
 
 ## Step 6: Construct relation
@@ -105,9 +105,8 @@ time node --max-old-space-size=12192 dist/es6/5_count.js
 2. 建構 Relation of mention behavior
 
 ```
-time node --max-old-space-size=12192 dist/es6/6_relation.js
+npm run 6
 ```
-
 
 ## Document
 

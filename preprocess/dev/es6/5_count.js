@@ -28,6 +28,12 @@ Promise.resolve()
     attributes:[ "retweeted_uid", "uid", "text", "isOriginal", "isgeo" ]  
   });
 })
+.then((tweets)=>{
+  let { retweeted_uid, uid, text, isOriginal, isgeo } = tweets;
+
+  
+
+})
 .map((tweet)=>{
   let uid = tweet.dataValues.uid;
   let text = tweet.dataValues.text;

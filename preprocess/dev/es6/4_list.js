@@ -28,7 +28,7 @@ Promise.resolve()
 .then(()=>{
   return Tweets_Trains.findAll({
     where: {}, 
-    attributes:[ "mid", "uid", "text", "isRetweeted", "retweeted_counts" ] 
+    attributes:[ "mid", "uid", "text", "isRetweeted", "retweeted_counts", "isOriginal", "isgeo" ] 
   });
 })
 .then((tweets)=>{
@@ -36,19 +36,45 @@ Promise.resolve()
   let expressionMap = new Map();
   let topicMap = new Map();
   let relationList = [];
-  let userList = new Set();
+  let userMap = new Map();
 
   // for each tweet loop
   console.log(">> For each tweet loop ...");
   
   tweets.forEach((tweet)=>{
-    let { mid, uid, text, isRetweeted, retweeted_counts } = tweet;
+    let { mid, uid, text, isRetweeted, retweeted_counts, isOriginal, isgeo } = tweet;
     
-    userList.add(uid);
     relationList.push({ mid, uid });
 
     let expressionList = text.match($regex.expression) || [];
     let topicList = text.match($regex.topic) || [];
+    let mentionList = text.match($regex.mention) || [];
+    let mentionListUkn = text.match($regex.mentionUkn) || [];
+    let urlList = text.match($regex.url) || [];
+
+    if(!userMap.has(uid)) {
+      userMap.set(uid, {
+        tweet_counts: isOriginal ? 1 : 0,
+        retweet_counts: isOriginal ? 0 : 1,
+        mention_counts: mentionList.length + mentionListUkn.length,
+        url_counts: urlList.length,
+        expression_counts: expressionList.length,
+        topic_counts: topicList.length,
+        geo_counts: isgeo ? 1 : 0 
+      });
+    }
+    else{
+      userMap.set(uid, {
+        tweet_counts: userMap.get(uid).tweet_counts + isOriginal ? 1 : 0,
+        retweet_counts: userMap.get(uid).retweet_counts + isOriginal ? 0 : 1,
+        mention_counts: userMap.get(uid).mention_counts + mentionList.length + mentionListUkn.length,
+        url_counts: userMap.get(uid).url_counts + urlList.length,
+        expression_counts: userMap.get(uid).expression_counts + expressionList.length,
+        topic_counts: userMap.get(uid).topic_counts + topicList.length,
+        geo_counts: userMap.get(uid).geo_counts + isgeo ? 1 : 0 
+      });
+    }
+
 
     topicList.forEach((topic) => {
       topic = topic.replace(/#/g,"");
@@ -122,9 +148,16 @@ Promise.resolve()
     });
   });
 
-  userList.forEach((value)=>{
+  userMap.forEach((value, key)=>{
     userResults.push({ 
-      uid: value
+      uid: key,
+      tweet_counts: value.tweet_counts,
+      retweet_counts: value.retweet_counts,
+      mention_counts: value.mention_counts,
+      url_counts: value.url_counts,
+      expression_counts: value.expression_counts,
+      topic_counts: value.topic_counts,
+      geo_counts: value.geo_counts,
     });
   });
 
