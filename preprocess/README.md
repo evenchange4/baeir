@@ -96,15 +96,6 @@ Negative:
 npm run 4
 ```
 
-## Step 5: Construct relation
-
-1. 建構 Relation of retweet behavior
-2. 建構 Relation of mention behavior
-
-```
-npm run 5
-```
-
 ## Document
 
 ![ER-diagram](/image/Weibo ER-diagram.png)
