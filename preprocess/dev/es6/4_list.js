@@ -81,26 +81,26 @@ Promise.resolve()
 
     if(!userMap.has(uid)) {
       userMap.set(uid, {
-        tweet_counts: isOriginal ? 1 : 0,
-        retweet_counts: isOriginal ? 0 : 1,
+        tweet_counts: (isOriginal ? 1 : 0),
+        retweet_counts: (isOriginal ? 0 : 1),
         mention_counts: mentionList.length + mentionListUkn.length,
         url_counts: urlList.length,
         expression_counts: expressionList.length,
         topic_counts: topicList.length,
-        geo_counts: isgeo ? 1 : 0,
+        geo_counts: (isgeo ? 1 : 0),
         retweeted_counts: 0,
         mentioned_counts: 0
       });
     }
     else{
       userMap.set(uid, {
-        tweet_counts: userMap.get(uid).tweet_counts + isOriginal ? 1 : 0,
-        retweet_counts: userMap.get(uid).retweet_counts + isOriginal ? 0 : 1,
+        tweet_counts: userMap.get(uid).tweet_counts + (isOriginal ? 1 : 0),
+        retweet_counts: userMap.get(uid).retweet_counts + (isOriginal ? 0 : 1),
         mention_counts: userMap.get(uid).mention_counts + mentionList.length + mentionListUkn.length,
         url_counts: userMap.get(uid).url_counts + urlList.length,
         expression_counts: userMap.get(uid).expression_counts + expressionList.length,
         topic_counts: userMap.get(uid).topic_counts + topicList.length,
-        geo_counts: userMap.get(uid).geo_counts + isgeo ? 1 : 0,
+        geo_counts: userMap.get(uid).geo_counts + (isgeo ? 1 : 0),
         retweeted_counts: userMap.get(uid).retweeted_counts,
         mentioned_counts: userMap.get(uid).mentioned_counts
       });
@@ -226,7 +226,7 @@ Promise.resolve()
       if(!topicMap.has(topic)) {
         topicMap.set(topic, { 
           retweeted_counts,
-          nonretweeted_counts: isRetweeted ? 0 : 1
+          nonretweeted_counts: (isRetweeted ? 0 : 1)
         });
       }
       else{
@@ -250,7 +250,7 @@ Promise.resolve()
       if(!expressionMap.has(expression)) {
         expressionMap.set(expression, { 
           retweeted_counts,
-          nonretweeted_counts: isRetweeted ? 0 : 1
+          nonretweeted_counts: (isRetweeted ? 0 : 1)
         });
       }
       else{
