@@ -23,6 +23,7 @@ Edit `configs.json`
 
 ```
 npm i babel -g
+npm install -g mocha
 
 npm i
 npm run build
@@ -94,6 +95,13 @@ Negative:
 
 ```
 npm run 4
+```
+
+## Test
+
+```
+npm run local
+npm run test
 ```
 
 ## Document

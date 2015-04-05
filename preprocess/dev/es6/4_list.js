@@ -106,6 +106,12 @@ Promise.resolve()
       });
     }
 
+    if(uid === "zzzzzzzz"){
+      console.log(mentionList);
+      console.log(mentionListUkn);  
+      console.log(userMap.get("zzzzzzzz").mention_counts);
+    }
+
     if (!isOriginal){
       if (!userMap.has(retweeted_uid)){
         userMap.set(retweeted_uid, {
