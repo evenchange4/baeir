@@ -5,7 +5,7 @@
   "main": "",
   "scripts": {
     "1sample": "time node --max-old-space-size=12192 dist/es6/1_separateDataset.js data/sample.csv",
-    "1baeir": "time node --max-old-space-size=12192 dist/es6/1_separateDataset.js  ../../weibo\\ dataset/raw/csv/week50.csv",
+    "1baeir": "time node --max-old-space-size=12192 dist/es6/1_separateDataset.js  '../../weibo dataset/raw/csv/week50.csv'",
     "2": "time node --max-old-space-size=12192 dist/es6/2_isRetweeted.js",
     "3": "time node --max-old-space-size=12192 dist/es6/3_imbalanceCheck.js",
     "4": "time node --max-old-space-size=12192 dist/es6/4_list.js",
@@ -16,7 +16,7 @@
     "watch": "babel dev --out-dir dist --watch",
     "db": "node dist/es6/0_db.js",
     "baeir": "npm run build & npm run db && npm run 1baeir && npm run 234",
-    "local": "npm run build & npm run db && npm run sample && npm run 234"
+    "local": "npm run build & npm run db && npm run 1sample && npm run 234"
   },
   "author": "",
   "license": "ISC",
