@@ -26,6 +26,9 @@ describe("Relation_Users_Users", (done)=>{
       .then((d)=> {
         relation = d.dataValues;
         done();
+      })
+      .catch((error)=>{
+        console.log(error);
       });
     });
     it("should return 1 when {uid1_mention_uid2}", (done)=>{
@@ -58,6 +61,9 @@ describe("Relation_Users_Users", (done)=>{
       .then((d)=> {
         relation = d.dataValues;
         done();
+      })
+      .catch((error)=>{
+        console.log(error);
       });
     });
     it("should return 2 when {uid1_mention_uid2}", (done)=>{

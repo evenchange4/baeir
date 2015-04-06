@@ -21,6 +21,9 @@ describe("Tweets_Trains", (done)=>{
       .then((number)=> {
         assert.equal(number, 8);
         done();
+      })
+      .catch((error)=>{
+        console.log(error);
       });
     });
     
@@ -29,6 +32,9 @@ describe("Tweets_Trains", (done)=>{
       .then((number)=> {
         assert.equal(number, 6);
         done();
+      })
+      .catch((error)=>{
+        console.log(error);
       });
     });
   
@@ -37,6 +43,9 @@ describe("Tweets_Trains", (done)=>{
       .then((number)=> {
         assert.equal(number, 2);
         done();
+      })
+      .catch((error)=>{
+        console.log(error);
       });
     });
 
@@ -53,6 +62,9 @@ describe("Tweets_Trains", (done)=>{
       .then((d)=> {
         tweet = d.dataValues;
         done()
+      })
+      .catch((error)=>{
+        console.log(error);
       });
     });
     it("should return true when {isRetweeted}", (done)=>{
@@ -100,6 +112,9 @@ describe("Tweets_Trains", (done)=>{
       .then((d)=> {
         tweet = d.dataValues;
         done()
+      })
+      .catch((error)=>{
+        console.log(error);
       });
     });
     it("should return true when {isRetweeted}", (done)=>{

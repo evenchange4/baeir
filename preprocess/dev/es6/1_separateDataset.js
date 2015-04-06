@@ -56,7 +56,7 @@ lr.on("line", (line) => {
       return Tweets_Tests;
     }
     else{
-      return Promise.reject("out of data");
+      return Promise.reject("not between start and end");
     }
   })
   .then((Table)=>{

@@ -25,7 +25,7 @@ Promise.resolve()
   return $sequelize.sequelize.query($sql.isRetweetedTrains, null, { raw: true } );
 })
 .then((data)=>{
-  console.log(`>> data.length = ${data[0].length}`);
+  console.log(`>> number of data has been retweeted = ${data[0].length}`);
   return data[0];
 })
 .map((data)=>{
@@ -62,7 +62,7 @@ Promise.resolve()
   return $sequelize.sequelize.query($sql.isRetweetedTests, null, { raw: true } );
 })
 .then((data)=>{
-  console.log(`>> data.length = ${data[0].length}`);
+  console.log(`>> number of data has been retweeted = ${data[0].length}`);
   return data[0];
 })
 .map((data)=>{

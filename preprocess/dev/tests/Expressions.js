@@ -20,6 +20,9 @@ describe("Expressions", (done)=>{
       .then((number)=> {
         assert.equal(number, 10);
         done();
+      })
+      .catch((error)=>{
+        console.log(error);
       });
     });
   });
@@ -35,6 +38,9 @@ describe("Expressions", (done)=>{
       .then((d)=> {
         expression = d.dataValues;
         done()
+      })
+      .catch((error)=>{
+        console.log(error);
       });
     });
     it("should return 0 when {retweeted_counts}", (done)=>{
@@ -58,6 +64,9 @@ describe("Expressions", (done)=>{
       .then((d)=> {
         expression = d.dataValues;
         done()
+      })
+      .catch((error)=>{
+        console.log(error);
       });
     });
     it("should return 1 when {retweeted_counts}", (done)=>{

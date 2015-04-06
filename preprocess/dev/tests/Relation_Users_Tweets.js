@@ -21,6 +21,9 @@ describe("Relation_Users_Tweets", (done)=>{
       .then((number)=> {
         assert.equal(number, 8);
         done();
+      })
+      .catch((error)=>{
+        console.log(error);
       });
     });
   });

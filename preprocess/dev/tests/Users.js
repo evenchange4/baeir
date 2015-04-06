@@ -20,6 +20,9 @@ describe("Users", (done)=>{
       .then((number)=> {
         assert.equal(number, 10);
         done();
+      })
+      .catch((error)=>{
+        console.log(error);
       });
     });
   });
@@ -35,6 +38,9 @@ describe("Users", (done)=>{
       .then((d)=> {
         user = d.dataValues;
         done()
+      })
+      .catch((error)=>{
+        console.log(error);
       });
     });
     it("should return 1 when {tweet_counts}", (done)=>{
@@ -86,6 +92,9 @@ describe("Users", (done)=>{
       .then((d)=> {
         user = d.dataValues;
         done()
+      })
+      .catch((error)=>{
+        console.log(error);
       });
     });
     it("should return 0 when {tweet_counts}", (done)=>{
@@ -137,6 +146,9 @@ describe("Users", (done)=>{
       .then((d)=> {
         user = d.dataValues;
         done()
+      })
+      .catch((error)=>{
+        console.log(error);
       });
     });
     it("should return 0 when {tweet_counts}", (done)=>{
