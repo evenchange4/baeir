@@ -14,8 +14,6 @@ import console from "gulp-util";
 
 const tablesList = [
   "Tweets", 
-  "Tweets_Trains", 
-  "Tweets_Tests", 
   "Users", 
   "Expressions",
   "Topics",

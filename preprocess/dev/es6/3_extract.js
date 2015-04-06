@@ -18,8 +18,6 @@ const Users = $sequelize.Users;
 const Relation_Users_Users = $sequelize.Relation_Users_Users;
 const tablesList = [
   "Users", 
-  "Tweets_Trains", 
-  "Tweets_Tests", 
   "Expressions",
   "Topics",
   "Relation_Users_Users", 
