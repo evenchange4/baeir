@@ -124,6 +124,12 @@ Promise.resolve()
       countObj.Tests.Negative,
       countObj.Tests.Positive + countObj.Tests.Negative,
       countObj.Tests.Positive/(countObj.Tests.Positive + countObj.Tests.Negative)
+    ], [
+      "Total",
+      countObj.Trains.Positive + countObj.Tests.Positive,
+      countObj.Trains.Negative + countObj.Tests.Negative,
+      countObj.Trains.Positive + countObj.Tests.Positive + countObj.Trains.Negative + countObj.Tests.Negative,
+      (countObj.Trains.Positive + countObj.Tests.Positive)/(countObj.Trains.Positive + countObj.Tests.Positive + countObj.Trains.Negative + countObj.Tests.Negative)
     ]
   );
 
