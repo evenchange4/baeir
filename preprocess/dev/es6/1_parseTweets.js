@@ -14,12 +14,13 @@ const Tweets = $sequelize.Tweets;
 
 // parse file
 const filePath = process.argv[2];
-const date = process.argv[3];
+const startDay = process.argv[3];
+const endDay = process.argv[4];
 const lr = new LineByLineReader(filePath, {skipEmptyLines: true });
 
 // Separate Date
-const Start = new Date(`2012-12-${date} 00:00:00`).getTime();
-const End =   new Date(`2012-12-${date} 23:59:59`).getTime();
+const Start = new Date(`2012-12-${startDay} 00:00:00`).getTime();
+const End =   new Date(`2012-12-${endDay} 23:59:59`).getTime();
 
 lr.on("line", (line) => {
   let [ mid, retweeted_status_mid, uid, retweeted_uid, source, image, text = "", geo, created_at, deleted_last_seen, permission_denied ] = line.split(",");

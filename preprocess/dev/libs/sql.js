@@ -17,31 +17,34 @@ GROUP BY \
 // Traing 與 Testing 的 Users 交集，受試者 ( > 25)
 // 4438 資料列
 // 總共執行時間: 17,048.068 ms
-export const users = ` \
+export const filter = `\
 SELECT \
-  b.uid AS "uid", \
-  a.a_counts AS "a_counts",  \
-  COUNT(b.uid) AS "b_counts", \
-  a.a_counts+ COUNT(b.uid) AS "total" \
+  T.uid,  \
+  T.mid,  \
+  T."isRetweeted",  \
+  T.retweeted_counts \
 FROM \
   ( \
-  SELECT  \
-    a.uid AS "a_uid",  \
-    COUNT(a.uid) AS "a_counts" \
-  FROM  \
-    "Tweets_Trains" a \
-  GROUP BY  \
-    a.uid \
-  HAVING \
-    COUNT(a.uid) > 25 \
-  ) AS a \
-INNER JOIN  \
-  "Tweets_Tests" b \
-ON  \
-  a.a_uid=b.uid \
-GROUP BY  \
-  b.uid, \
-  a.a_counts \
-HAVING \
-  COUNT(b.uid) > 25 \
+  SELECT \
+    u.uid,  \
+    u.tweet_counts,  \
+    u.retweet_counts,   \
+    u.tweet_counts + u.retweet_counts AS "total" \
+  FROM \
+    "Users" AS u \
+  WHERE \
+    u.tweet_counts + u.retweet_counts > 40 and \
+    u.tweet_counts > 8 and \
+    u.retweet_counts > 8 \
+  ) AS U \
+INNER JOIN \
+  "Relation_Users_Tweets" AS R \
+ON \
+  U.uid=R.uid \
+INNER JOIN \
+  "Tweets" AS T \
+ON \
+  R.mid=T.mid  \
+ORDER BY  \
+  T.created_at ASC \
 `

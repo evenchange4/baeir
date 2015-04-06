@@ -27,7 +27,7 @@ Promise.resolve()
   console.log(`>> number of data has been retweeted = ${data[0].length}`);
   return data[0];
 })
-.map((data)=>{
+.each((data)=>{
 
   /**
   * 是否被轉錄過 isRetweeted
