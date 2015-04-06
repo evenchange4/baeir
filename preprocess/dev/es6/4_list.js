@@ -10,7 +10,7 @@ import $sequelize from "../libs/sequelize";
 import * as $regex from "../libs/regex";
 
 // Model Schema
-const Tweets_Trains = $sequelize.Tweets_Trains;
+const Tweets = $sequelize.Tweets;
 const Expressions = $sequelize.Expressions;
 const Topics = $sequelize.Topics;
 const Relation_Users_Tweets = $sequelize.Relation_Users_Tweets;
@@ -50,7 +50,7 @@ Promise.resolve()
   console.log(msg);
 })
 .then(()=>{
-  return Tweets_Trains.findAll({
+  return Tweets.findAll({
     where: {}, 
     attributes:[ "mid", "uid", "retweeted_uid", "text", "isRetweeted", "retweeted_counts", "isOriginal", "isgeo" ] 
   });
