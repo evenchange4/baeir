@@ -1,0 +1,4 @@
+{
+  "lowerLimitOfTweetConuts": 60,
+  "percentageOfTrainSet": 0.8
+}
