@@ -30,28 +30,16 @@ npm run build
 npm run db
 ```
 
-## Preprocess Flow
-
-![Preprocess flow](/image/Preprocess flow.png)
-
 ## Step 1: Separate Datasets
 
-- 初始化 Training / Testing Datasets 列表
-- Choose separate date: 
+- 初始化 Tweets Datasets 列表
+- Choose separate started day and ended day: 
 
 ```
-// Separate Date
-const Train_Start = new Date("2012-12-10 20:00:00").getTime();
-const Train_End =   new Date("2012-12-10 21:59:59").getTime();
-const Test_Start =  new Date("2012-12-10 22:00:00").getTime();
-const Test_End =    new Date("2012-12-10 22:59:59").getTime();
+time node --max-old-space-size=12192 dist/es6/1_separateDataset.js data/week50.csv 10 10
 ```
 
-```
-time node --max-old-space-size=12192 dist/es6/1_separateDataset.js data/week50.csv
-```
-
-## Step 2: isRetweeted
+## Step 2: Label isRetweeted
 
 1. 是否被轉錄過 isRetweeted
 2. 計算 retweeted_counts 被轉錄多少次
@@ -60,10 +48,32 @@ time node --max-old-space-size=12192 dist/es6/1_separateDataset.js data/week50.c
 npm run 2
 ```
 
-## Step 3: Check if imblanced datasets
+## Step 3: Extract list / relation Features
+
+1. Aggregate By Users，找出所有受訪者的 Tweets
+2. 篩選出前 4/5 為 Training Datasets
+3. Extract feature from raw tweets
+  1. 初始化 Expressions 列表
+  2. 初始化 Topics 列表
+  3. 建構 Relation between User and Tweet
+  4. 初始化 Users 列表
+  2. 計算 tweet_counts   自己的文章數量（原創文章）
+  3. 計算 retweet_counts 自己轉錄過多少文章
+  4. 計算 mention_counts 自己提到多少人
+  5. 計算 retweeted_counts  被人轉發數量
+  6. 注意，這邊的數量有可能會跟 Tweets 算得不一樣，應為有些沒有 content
+  7. 計算 mentioned_counts  被人提及多少次
+  8. 建構 Relation of retweet behavior
+  9. 建構 Relation of mention behavior
 
 ```
 npm run 3
+```
+
+## Step 4: Check if imblanced datasets 
+
+```
+npm run 4
 ```
 
 - Results: 
@@ -78,24 +88,7 @@ Positive:
 Negative: 
 ```
 
-## Step 4: Extract List / Relation
-
-1. 初始化 Expressions 列表
-2. 初始化 Topics 列表
-3. 建構 Relation between User and Tweet
-4. 初始化 Users 列表
-2. 計算 tweet_counts   自己的文章數量（原創文章）
-3. 計算 retweet_counts 自己轉錄過多少文章
-4. 計算 mention_counts 自己提到多少人
-5. 計算 retweeted_counts  被人轉發數量
-6. 注意，這邊的數量有可能會跟 Tweets 算得不一樣，應為有些沒有 content
-7. 計算 mentioned_counts  被人提及多少次
-8. 建構 Relation of retweet behavior
-9. 建構 Relation of mention behavior
-
-```
-npm run 4
-```
+![Preprocess flow](/image/Preprocess flow2.png)
 
 ## Test
 
