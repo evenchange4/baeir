@@ -8,7 +8,7 @@ import console from "gulp-util";
 import $sequelize from "../libs/sequelize";
 import * as $sql from "../libs/sql";
 import * as $feature from "../libs/extractTweetFeatures";
-import $params from "../../parameters.json";
+import $params from "../../configs/parameters.json";
 
 // Model Schema
 const Expressions = $sequelize.Expressions;

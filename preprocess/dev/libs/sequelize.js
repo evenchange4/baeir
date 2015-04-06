@@ -7,7 +7,7 @@ import Sequelize from "sequelize";
 import Promise from "bluebird";
 
 // self project modules
-import $config from "../../configs.json";
+import $config from "../../configs/db.json";
 
 /**
 * 連接資料庫
