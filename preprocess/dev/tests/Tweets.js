@@ -6,18 +6,18 @@ import $sequelize from "../libs/sequelize";
 import console from "gulp-util";
 
 // Model Schema
-const Tweets_Trains = $sequelize.Tweets_Trains;
+const Tweets = $sequelize.Tweets;
 
 /**
  * test case
  */
 
-describe("Tweets_Trains", (done)=>{
+describe("Tweets", (done)=>{
 
   describe("#count(All)", ()=>{
 
     it("should return 8 when count all", (done)=>{
-      Tweets_Trains.count({ where: {}})
+      Tweets.count({ where: {}})
       .then((number)=> {
         assert.equal(number, 8);
         done();
@@ -28,7 +28,7 @@ describe("Tweets_Trains", (done)=>{
     });
     
     it("should return 6 when count {isRetweeted: false}", (done)=>{
-      Tweets_Trains.count({ where: { isRetweeted: false } })
+      Tweets.count({ where: { isRetweeted: false } })
       .then((number)=> {
         assert.equal(number, 6);
         done();
@@ -39,7 +39,7 @@ describe("Tweets_Trains", (done)=>{
     });
   
     it("should return 2 when count {isRetweeted: true}", (done)=>{
-      Tweets_Trains.count({ where: { isRetweeted: true } })
+      Tweets.count({ where: { isRetweeted: true } })
       .then((number)=> {
         assert.equal(number, 2);
         done();
@@ -54,7 +54,7 @@ describe("Tweets_Trains", (done)=>{
   describe("#record(mRsOcOLTlc)", ()=>{
     let tweet = {};
     before((done)=>{
-      Tweets_Trains.find({ 
+      Tweets.find({ 
         where: {
           mid: "mRsOcOLTlc"
         }
@@ -104,7 +104,7 @@ describe("Tweets_Trains", (done)=>{
   describe("#record(mH44qG6iUm)", ()=>{
     let tweet = {};
     before((done)=>{
-      Tweets_Trains.find({ 
+      Tweets.find({ 
         where: {
           mid: "mH44qG6iUm"
         }

@@ -12,10 +12,8 @@ import console from "gulp-util";
 * @author Michael Hsu
 */
 
-var tablesList = [
+const tablesList = [
   "Tweets", 
-  "Tweets_Trains", 
-  "Tweets_Tests", 
   "Users", 
   "Expressions",
   "Topics",
@@ -30,4 +28,4 @@ $sequelize
 })
 .catch((error)=>{
   console.log(error);
-})
+});

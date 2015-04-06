@@ -11,6 +11,13 @@ module.exports = function(sequelize, Sequelize){
     mid: {
       type: Sequelize.STRING,
       primaryKey: true
+    },
+    // ####################################
+    // Output: 是否被轉錄 
+    // #################################### 
+    isTrain: {
+      type: Sequelize.BOOLEAN,
+      defaultValue: false
     }
   });
 };
