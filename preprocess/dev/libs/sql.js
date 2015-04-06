@@ -1,5 +1,7 @@
 "use strict";
 
+import $params from "../../parameters.json";
+
 // example: "uMLLV3ZCO", "2"
 export const isRetweeted = `\
 SELECT \
@@ -13,6 +15,28 @@ WHERE \
 GROUP BY \
   a.mid \
 `;     
+
+export const aggregateByUsers = ` \
+SELECT \
+  * \
+FROM \
+  "Tweets" AS Tweets \
+INNER JOIN \
+  ( \
+  SELECT \
+    t.uid AS "uid" \
+  FROM \
+    "Tweets" AS t \
+  GROUP BY \
+    t.uid \
+  HAVING \
+    COUNT(t.mid) >= ${$params.lowerLimitOfTweetConuts} \
+  ) AS Users \
+ON  \
+  Tweets.uid=Users.uid \
+ORDER BY \
+  Tweets.created_at ASC \
+`
 
 // Traing 與 Testing 的 Users 交集，受試者 ( > 25)
 // 4438 資料列
