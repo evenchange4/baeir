@@ -88,7 +88,7 @@ Positive:
 Negative: 
 ```
 
-![Preprocess flow](/image/Preprocess flow2.png)
+![Preprocess flow](/image/Preprocess flow 2.png)
 
 ## Test
 
