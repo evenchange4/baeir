@@ -72,3 +72,47 @@ FROM \
     R.uid \
   ) AS U \
 `
+
+export const Relation_Users_Retweets = `\
+SELECT  \
+  R.uid, \
+  R.retweeted_status_mid, \
+  T.rtcount, \
+  R2.ucount \
+FROM \
+  "Tweets" AS R \
+INNER JOIN \
+  ( \
+  SELECT \
+    t.uid, \
+    COUNT(t.retweeted_status_mid) AS "rtcount" \
+  FROM \
+    "Tweets" AS t \
+  WHERE \
+    t."isOriginal" = false \
+  GROUP BY \
+    t.uid \
+  HAVING \
+    COUNT(t.retweeted_status_mid) > ${$params.userHasMoreThan_Tweets} \
+  ) AS T \
+ON  \
+  T.uid = R.uid \
+INNER JOIN \
+  ( \
+  SELECT \
+    t.retweeted_status_mid, \
+    COUNT(t.uid) AS "ucount" \
+  FROM \
+    "Tweets" AS t \
+  WHERE \
+    t."isOriginal" = false \
+  GROUP BY \
+    t.retweeted_status_mid \
+  HAVING \
+    COUNT(t.uid) > ${$params.tweetHasBeenRetweetedMoreThan_Uwers} \
+  ) AS R2 \
+ON  \
+  R.retweeted_status_mid = R2.retweeted_status_mid \
+WHERE \
+  R."isOriginal" = false \
+`

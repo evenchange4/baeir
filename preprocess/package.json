@@ -8,6 +8,7 @@
     "3": "time node --max-old-space-size=12192 dist/es6/3_extract.js",
     "4": "time node --max-old-space-size=12192 dist/es6/4_checkImbalance.js",
     "234": "npm run 2 && npm run 3  && npm run 4",
+    "5": "time node --max-old-space-size=12192 dist/es6/5_exportCSV.js",
     "watch": "babel dev --out-dir dist --watch",
     "test": "mocha dist/tests",
     "clean": "rm -rf dist/*",
