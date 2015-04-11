@@ -4,20 +4,11 @@
 import Promise from "bluebird";
 require("babel/register");
 import console from "gulp-util";
-// import fs from "fs";
 let fs = Promise.promisifyAll(require("fs"));
 
 // self project modules
 import $sequelize from "../libs/sequelize";
 import * as $sql from "../libs/sql";
-import $params from "../../configs/parameters.json";
-
-// Model Schema
-
-// Output result
-// const usersSetFile = fs.createWriteStream('../../data/output/users.txt');
-// const tweetsSetFile = fs.createWriteStream('../../data/output/tweets.txt');
-// const relationsSetFile = fs.createWriteStream('../../data/output/relations.csv');
 
 let relationsSet = new Set();
 let usersSet = new Set;
