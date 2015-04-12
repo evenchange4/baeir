@@ -1,0 +1,4 @@
+
+> evaluation@1.0.0 ap /Users/mtk07866/code/baeir/evaluation
+> time node --max-old-space-size=12192 dist/es6/1_ap.js ../../data/MF/answers.csv ../../data/MF/results.csv 100
+
