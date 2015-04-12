@@ -73,46 +73,64 @@ FROM \
   ) AS U \
 `
 
-export const Relation_Users_Retweets = `\
-SELECT  \
-  R.uid, \
-  R.retweeted_status_mid, \
-  T.rtcount, \
-  R2.ucount \
+export const Relation_Users_Retweets = ` \
+SELECT \
+  A.uid, \
+  A.mid, \
+  A.retweeted_status_mid, \
+  B.created_at AS "origin_time", \
+  A.retweeted_time, \
+  A.retweeted_time - B.created_at AS "retweeted_time - origin_time", \
+  A.rtcount, \
+  A.ucount \
 FROM \
-  "Tweets" AS R \
-INNER JOIN \
   ( \
-  SELECT \
-    t.uid, \
-    COUNT(t.retweeted_status_mid) AS "rtcount" \
+  SELECT  \
+    T.uid, \
+    T.mid, \
+    T.retweeted_status_mid, \
+    T.created_at AS "retweeted_time", \
+    U.rtcount, \
+    R.ucount \
   FROM \
-    "Tweets" AS t \
+    "Tweets" AS T \
+  INNER JOIN \
+    ( \
+    SELECT \
+      uid, \
+      COUNT(retweeted_status_mid) AS "rtcount" \
+    FROM \
+      "Tweets" AS t \
+    WHERE \
+      t."isOriginal" = false \
+    GROUP BY \
+      uid \
+    HAVING \
+      COUNT(retweeted_status_mid) > ${$params.userHasMoreThan_Tweets} \
+    ) AS U \
+  ON  \
+    U.uid = T.uid \
+  INNER JOIN \
+    ( \
+    SELECT \
+      retweeted_status_mid, \
+      COUNT(uid) AS "ucount" \
+    FROM \
+      "Tweets" AS t \
+    WHERE \
+      t."isOriginal" = false \
+    GROUP BY \
+      retweeted_status_mid \
+    HAVING \
+      COUNT(uid) > ${$params.tweetHasBeenRetweetedMoreThan_Uwers} \
+    ) AS R \
+  ON  \
+    T.retweeted_status_mid = R.retweeted_status_mid \
   WHERE \
-    t."isOriginal" = false \
-  GROUP BY \
-    t.uid \
-  HAVING \
-    COUNT(t.retweeted_status_mid) > ${$params.userHasMoreThan_Tweets} \
-  ) AS T \
-ON  \
-  T.uid = R.uid \
-INNER JOIN \
-  ( \
-  SELECT \
-    t.retweeted_status_mid, \
-    COUNT(t.uid) AS "ucount" \
-  FROM \
-    "Tweets" AS t \
-  WHERE \
-    t."isOriginal" = false \
-  GROUP BY \
-    t.retweeted_status_mid \
-  HAVING \
-    COUNT(t.uid) > ${$params.tweetHasBeenRetweetedMoreThan_Uwers} \
-  ) AS R2 \
-ON  \
-  R.retweeted_status_mid = R2.retweeted_status_mid \
-WHERE \
-  R."isOriginal" = false \
+    T."isOriginal" = false \
+  ) AS A \
+INNER JOIN  \
+  "Tweets" AS B \
+ON \
+  A.retweeted_status_mid = B.mid \
 `
