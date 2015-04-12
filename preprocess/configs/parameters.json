@@ -2,5 +2,5 @@
   "lowerLimitOfTweetConuts": 100,
   "percentageOfTrainSet": 0.8,
   "userHasMoreThan_Tweets": 20,
-  "tweetHasBeenRetweetedMoreThan_Uwers": 20
+  "tweetHasBeenRetweetedMoreThan_Users": 20
 }

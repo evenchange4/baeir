@@ -122,7 +122,7 @@ FROM \
     GROUP BY \
       retweeted_status_mid \
     HAVING \
-      COUNT(uid) > ${$params.tweetHasBeenRetweetedMoreThan_Uwers} \
+      COUNT(uid) > ${$params.tweetHasBeenRetweetedMoreThan_Users} \
     ) AS R \
   ON  \
     T.retweeted_status_mid = R.retweeted_status_mid \
