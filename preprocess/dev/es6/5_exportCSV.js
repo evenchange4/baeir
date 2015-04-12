@@ -10,11 +10,12 @@ let fs = Promise.promisifyAll(require("fs"));
 // self project modules
 import $sequelize from "../libs/sequelize";
 import * as $sql from "../libs/sql";
+import * as $format from "../libs/format";
 import $params from "../../configs/parameters.json";
 
 // variable
 const path = Path.join(__dirname, '/../../data/output');
-let relationsSet = new Set();
+let relationsMap = new Map();
 let usersSet = new Set;
 let tweetsSet = new Set;
 
@@ -29,7 +30,11 @@ Promise.resolve()
 .each((relation)=>{
   usersSet.add(relation.uid);
   tweetsSet.add(relation.retweeted_status_mid);
-  relationsSet.add(`${relation.uid}_${relation.retweeted_status_mid}`);
+
+  relationsMap.set(
+    `${relation.uid}_${relation.retweeted_status_mid}`, 
+    $format.toSec(relation.reponse_time)
+  );
 })
 .then(()=>{
   let totalReport = "";
@@ -39,13 +44,13 @@ Promise.resolve()
 
   console.log(`>> # Users = ${usersSet.size}`);
   console.log(`>> # Tweets = ${tweetsSet.size}`);
-  console.log(`>> # Relations = ${relationsSet.size}`);
+  console.log(`>> # Relations = ${relationsMap.size}`);
 
   totalReport = `${totalReport} >> # userHasMoreThan_Tweets = ${$params.userHasMoreThan_Tweets} \n`;
   totalReport = `${totalReport} >> # tweetHasBeenRetweetedMoreThan_Uwers = ${$params.tweetHasBeenRetweetedMoreThan_Uwers} \n`;
   totalReport = `${totalReport} >> # Users = ${usersSet.size} \n`;
   totalReport = `${totalReport} >> # Tweets = ${tweetsSet.size} \n`;
-  totalReport = `${totalReport} >> # Relations = ${relationsSet.size} \n`;
+  totalReport = `${totalReport} >> # Relations = ${relationsMap.size} \n`;
 
   fs.writeFileAsync(`${path}/README.txt`, totalReport);
 })
@@ -75,8 +80,8 @@ Promise.resolve()
   let trelationsResult = "";
   usersSet.forEach((u)=>{
     tweetsSet.forEach((t)=>{
-      if (relationsSet.has(`${u}_${t}`)){
-        trelationsResult = `${trelationsResult}1,`
+      if (relationsMap.has(`${u}_${t}`)){
+        trelationsResult = `${trelationsResult}${1/relationsMap.get(`${u}_${t}`)},`
       }
       else{
         trelationsResult = `${trelationsResult}0,`

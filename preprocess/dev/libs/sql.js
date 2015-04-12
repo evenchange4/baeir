@@ -80,7 +80,7 @@ SELECT \
   A.retweeted_status_mid, \
   B.created_at AS "origin_time", \
   A.retweeted_time, \
-  A.retweeted_time - B.created_at AS "retweeted_time - origin_time", \
+  A.retweeted_time - B.created_at AS "reponse_time", \
   A.rtcount, \
   A.ucount \
 FROM \
