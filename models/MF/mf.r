@@ -25,7 +25,9 @@ matrix_factorization = function(M, P, Q, K, steps, alpha, beta){
     }
     print(step)
     print(e)
+    write.table(P %*% Q,file="results/results.csv", row.names=FALSE, col.names=FALSE, sep=",", na="") # keeps the rownames
     if(e < 0.0001){
+      # write.table(P %*% Q,file="results.csv") # keeps the rownames
       break
     }
   }
