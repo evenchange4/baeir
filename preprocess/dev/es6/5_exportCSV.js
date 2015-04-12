@@ -4,19 +4,22 @@
 import Promise from "bluebird";
 require("babel/register");
 import console from "gulp-util";
+import Path from "path";
 let fs = Promise.promisifyAll(require("fs"));
 
 // self project modules
 import $sequelize from "../libs/sequelize";
 import * as $sql from "../libs/sql";
+import $params from "../../configs/parameters.json";
 
+// variable
+const path = Path.join(__dirname, '/../../data/output');
 let relationsSet = new Set();
 let usersSet = new Set;
 let tweetsSet = new Set;
 
 Promise.resolve()
 .then(()=>{
-  // 1. 清掉資料庫
   return $sequelize.sequelize.query($sql.Relation_Users_Retweets, null, { raw: true } );
 })
 .then((data)=>{
@@ -29,9 +32,22 @@ Promise.resolve()
   relationsSet.add(`${relation.uid}_${relation.retweeted_status_mid}`);
 })
 .then(()=>{
+  let totalReport = "";
+
+  console.log(`>> # userHasMoreThan_Tweets = ${$params.userHasMoreThan_Tweets}`);
+  console.log(`>> # tweetHasBeenRetweetedMoreThan_Uwers = ${$params.tweetHasBeenRetweetedMoreThan_Uwers}`)
+
   console.log(`>> # Users = ${usersSet.size}`);
   console.log(`>> # Tweets = ${tweetsSet.size}`);
   console.log(`>> # Relations = ${relationsSet.size}`);
+
+  totalReport = `${totalReport} >> # userHasMoreThan_Tweets = ${$params.userHasMoreThan_Tweets} \n`;
+  totalReport = `${totalReport} >> # tweetHasBeenRetweetedMoreThan_Uwers = ${$params.tweetHasBeenRetweetedMoreThan_Uwers} \n`;
+  totalReport = `${totalReport} >> # Users = ${usersSet.size} \n`;
+  totalReport = `${totalReport} >> # Tweets = ${tweetsSet.size} \n`;
+  totalReport = `${totalReport} >> # Relations = ${relationsSet.size} \n`;
+
+  fs.writeFileAsync(`${path}/README.txt`, totalReport);
 })
 .then(()=>{
   let usersResult = "";
@@ -40,10 +56,10 @@ Promise.resolve()
     usersResult = `${usersResult}${u}\n`;
   });
 
-  return fs.writeFileAsync(`${__dirname}/../../data/output/users.txt`, usersResult);
+  return fs.writeFileAsync(`${path}/users.txt`, usersResult);
 })
 .then(()=>{
-  console.log('>> Output file to data/output/users.txt');
+  console.log(`>> Output file to ${path}/users.txt`);
 
   let tweetsResult = "";
 
@@ -51,10 +67,10 @@ Promise.resolve()
     tweetsResult = `${tweetsResult}${t}\n`;
   });
 
-  return fs.writeFileAsync(`${__dirname}/../../data/output/tweets.txt`, tweetsResult);
+  return fs.writeFileAsync(`${path}/tweets.txt`, tweetsResult);
 })
 .then(()=>{
-  console.log('>> Output file to data/output/tweets.txt');
+  console.log(`>> Output file to ${path}/tweets.txt`);
 
   let trelationsResult = "";
   usersSet.forEach((u)=>{
@@ -69,10 +85,10 @@ Promise.resolve()
     trelationsResult = trelationsResult.slice(0, - 1);  //去掉最後一個逗號
     trelationsResult = `${trelationsResult}\n`
   });
-  return fs.writeFileAsync(`${__dirname}/../../data/output/relations.csv`, trelationsResult);
+  return fs.writeFileAsync(`${path}/relations.csv`, trelationsResult);
 })
 .then(()=>{
-  console.log('>> Output file to data/output/relations.csv');
+  console.log(`>> Output file to ${path}/relations.csv`);
 })
 .catch((error)=>{
   console.log({error});
