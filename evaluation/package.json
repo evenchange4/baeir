@@ -6,7 +6,8 @@
   "scripts": {
     "watch": "babel dev --out-dir dist --watch",
     "clean": "rm -rf dist/*",
-    "ap": "time node --max-old-space-size=12192 dist/es6/1_ap.js ../../data/MF/answers.csv ../../data/MF/results.csv 100",
+    "build": "npm run clean && babel dev --out-dir dist",
+    "ap": "time node --max-old-space-size=12192 dist/es6/1_ap.js ../../data/MF/5_5/answers.csv ../../data/MF/5_5/results.csv 10",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",

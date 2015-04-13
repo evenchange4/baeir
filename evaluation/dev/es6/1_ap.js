@@ -21,16 +21,16 @@ let result = [];
 
 Promise.resolve()
 .then(()=>{
-  return fs.readFileAsync(answersFilePath, 'utf8');
-})
-.then((data)=>{
-  answer = $topK(data, K);
-})
-.then(()=>{
   return fs.readFileAsync(resultsFilePath, 'utf8');
 })
 .then((data)=>{
   result = $topK(data, K);
+})
+.then(()=>{
+  return fs.readFileAsync(answersFilePath, 'utf8');
+})
+.then((data)=>{
+  answer = $topK(data, result.length);
 })
 .then(()=>{
   console.log({answer: answer.length, result: result.length});
@@ -38,8 +38,8 @@ Promise.resolve()
   for(let i = 0; i < answer.length; i++){
     let intersection = _.intersection(answer[i], result[i]);
     console.log({i})
-    console.log({answer: answer[i]});
-    console.log({result: result[i]});
+    console.log(`answer: ${answer[i]}`);
+    console.log(`result: ${result[i]}`);
     console.log({intersection});
     console.log({AP: intersection.length / K});
     console.log('\n');

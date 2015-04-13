@@ -32,6 +32,9 @@ export default function topK(data, topK) {
         if (maxValue != 0){
           resultArray[index].push( tweets.indexOf(maxValue) );
         } 
+        else{
+          break;
+        }
       }
       
     }
