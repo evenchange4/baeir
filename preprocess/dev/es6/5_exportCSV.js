@@ -47,7 +47,7 @@ Promise.resolve()
   console.log(`>> # Relations = ${relationsMap.size}`);
 
   totalReport = `${totalReport} >> # userHasMoreThan_Tweets = ${$params.userHasMoreThan_Tweets} \n`;
-  totalReport = `${totalReport} >> # tweetHasBeenRetweetedMoreThan_Uwers = ${$params.tweetHasBeenRetweetedMoreThan_Uwers} \n`;
+  totalReport = `${totalReport} >> # tweetHasBeenRetweetedMoreThan_Users = ${$params.tweetHasBeenRetweetedMoreThan_Users} \n`;
   totalReport = `${totalReport} >> # Users = ${usersSet.size} \n`;
   totalReport = `${totalReport} >> # Tweets = ${tweetsSet.size} \n`;
   totalReport = `${totalReport} >> # Relations = ${relationsMap.size} \n`;
