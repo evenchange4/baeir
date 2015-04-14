@@ -1,6 +1,6 @@
 {
   "lowerLimitOfTweetConuts": 100,
   "percentageOfTrainSet": 0.8,
-  "user_has_tweets_count": 5,
-  "tweet_has_been_retweeted_count": 5
+  "user_has_tweets_count": 1,
+  "tweet_has_been_retweeted_count": 1
 }

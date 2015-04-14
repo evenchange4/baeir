@@ -12,9 +12,11 @@ import $sequelize from "../libs/sequelize";
 import * as $sql from "../libs/sql";
 import * as $format from "../libs/format";
 import $params from "../../configs/parameters.json";
+import $relationExtract from "../libs/relationExtract";
 
 // variable
-const user_has_relations_count_limit = 10;
+const user_has_relations_count_limit = 5;
+const tweet_has_relations_count_limit = 5;
 const path = Path.join(__dirname, '/../../data/output');
 let relationsMap = new Map();
 let usersMap = new Map();
@@ -31,39 +33,36 @@ Promise.resolve()
   let relations = data[0];
   return relations;
 })
-.each((relation)=>{
-  // 計算 user 得轉推數量
-  if (usersMap.has(relation.uid)){
-    usersMap.set(relation.uid, usersMap.get(relation.uid) + 1);
-  }
-  else{
-    usersMap.set(relation.uid, 1);
-  }
-  // 計算 tweet 轉推數量
-  if (tweetsMap.has(relation.retweeted_status_mid)){
-    tweetsMap.set(relation.retweeted_status_mid, tweetsMap.get(relation.retweeted_status_mid) + 1);
-  }
-  else{
-    tweetsMap.set(relation.retweeted_status_mid, 1);
-  }
+.then((relations)=>{
+  let a = $relationExtract(relations, user_has_relations_count_limit, tweet_has_relations_count_limit);
+  
+  usersMap = a.usersMap;
+  tweetsMap = a.tweetsMap;
 
-  tweetsBiasMap.set(
-    relation.retweeted_status_mid,
-    relation
-  );
-  t_retweeted_counts_total = t_retweeted_counts_total + relation.t_retweeted_counts;
-  return relation;
+  return relations;
 })
+// .each((relation)=>{
+
+//   // tweetsBiasMap.set(
+//   //   relation.retweeted_status_mid,
+//   //   relation
+//   // );
+//   // t_retweeted_counts_total = t_retweeted_counts_total + relation.t_retweeted_counts;
+//   return relation;
+// })
 .each((relation)=>{
-  relationsMap.set(
-    `${relation.uid}_${relation.retweeted_status_mid}`, 
-    // tweetsMap.get(relation.retweeted_status_mid) * (relation.tweet_retweeted_by_user_count * 24*60*60) / (relation.user_has_tweets_count * relation.tweet_has_been_retweeted_count * $format.toSec(relation.avg_response_time))
-    tweetsMap.get(relation.retweeted_status_mid) * (relation.tweet_retweeted_by_user_count * 24*60*60) / $format.toSec(relation.avg_response_time)
-    // tweetsMap.get(relation.retweeted_status_mid) /10 // good
-    // (relation.tweet_retweeted_by_user_count)
-    // 1 / $format.toSec(relation.avg_response_time)
-    // (relation.tweet_retweeted_by_user_count * 24*60*60) / $format.toSec(relation.avg_response_time)
-  );
+  if (usersMap.has(relation.uid) && tweetsMap.has(relation.retweeted_status_mid)){
+    relationsMap.set(
+      `${relation.uid}_${relation.retweeted_status_mid}`, 
+      // tweetsMap.get(relation.retweeted_status_mid) * (relation.tweet_retweeted_by_user_count * 24*60*60) / (relation.user_has_tweets_count * relation.tweet_has_been_retweeted_count * $format.toSec(relation.avg_response_time))
+      // tweetsMap.get(relation.retweeted_status_mid) / $format.toSec(relation.avg_response_time)
+      // tweetsMap.get(relation.retweeted_status_mid) /10 // good
+      usersMap.get(relation.uid).get(relation.retweeted_status_mid)
+      // (relation.tweet_retweeted_by_user_count)
+      // 1 / $format.toSec(relation.avg_response_time)
+      // (relation.tweet_retweeted_by_user_count * 24*60*60) / $format.toSec(relation.avg_response_time)
+    );
+  }
 })
 
 /**
@@ -75,15 +74,15 @@ Promise.resolve()
 .then(()=>{
   let totalReport = "";
 
-  console.log(`>> # user_has_tweets_count = ${$params.user_has_tweets_count}`);
-  console.log(`>> # tweet_has_been_retweeted_count = ${$params.tweet_has_been_retweeted_count}`)
+  console.log(`>> # user_has_relations_count_limit = ${$params.user_has_relations_count_limit}`);
+  console.log(`>> # tweet_has_relations_count_limit = ${$params.tweet_has_relations_count_limit}`)
 
   console.log(`>> # Users = ${usersMap.size}`);
   console.log(`>> # Tweets = ${tweetsMap.size}`);
   console.log(`>> # Relations = ${relationsMap.size}`);
 
-  totalReport = `${totalReport} >> # user_has_tweets_count = ${$params.user_has_tweets_count} \n`;
-  totalReport = `${totalReport} >> # tweet_has_been_retweeted_count = ${$params.tweet_has_been_retweeted_count} \n`;
+  totalReport = `${totalReport} >> # user_has_relations_count_limit = ${$params.user_has_relations_count_limit} \n`;
+  totalReport = `${totalReport} >> # tweet_has_relations_count_limit = ${$params.tweet_has_relations_count_limit} \n`;
   totalReport = `${totalReport} >> # Users = ${usersMap.size} \n`;
   totalReport = `${totalReport} >> # Tweets = ${tweetsMap.size} \n`;
   totalReport = `${totalReport} >> # Relations = ${relationsMap.size} \n`;
@@ -100,8 +99,13 @@ Promise.resolve()
 .then(()=>{
   let usersResult = "";
 
-  usersMap.forEach((value, u)=>{
-    usersResult = `${usersResult}${u}\n`;
+  usersMap.forEach((value, uid)=>{
+    usersResult = `${usersResult}${uid}\n`;
+    value.forEach((count, mid)=>{
+      usersResult = `${usersResult}${mid} ${count},`;
+    })
+    usersResult = usersResult.slice(0, - 1);  //去掉最後一個逗號
+    usersResult = `${usersResult}\n`
   });
 
   return fs.writeFileAsync(`${path}/users.txt`, usersResult);
@@ -118,9 +122,13 @@ Promise.resolve()
 
   let tweetsResult = "";
 
-  tweetsMap.forEach((value, t)=>{
-    // console.log(value);
-    tweetsResult = `${tweetsResult}${t}\n`;
+  tweetsMap.forEach((value, mid)=>{
+    tweetsResult = `${tweetsResult}${mid}\n`;
+    value.forEach((count, uid)=>{
+      tweetsResult = `${tweetsResult}${uid} ${count},`;
+    })
+    tweetsResult = tweetsResult.slice(0, - 1);  //去掉最後一個逗號
+    tweetsResult = `${tweetsResult}\n`
   });
 
   return fs.writeFileAsync(`${path}/tweets.txt`, tweetsResult);
@@ -136,17 +144,16 @@ Promise.resolve()
   console.log(`>> Output file to ${path}/tweets.txt`);
 
   let relationsResult = "";
+
   usersMap.forEach((value, u)=>{
-    if (value > user_has_relations_count_limit){
-      tweetsMap.forEach((value, t)=>{
-        if (relationsMap.has(`${u}_${t}`)){
-          relationsResult = `${relationsResult}${relationsMap.get(`${u}_${t}`)},`
-        }
-        else{
-          relationsResult = `${relationsResult}0,`
-        }
-      });
-    }
+    tweetsMap.forEach((value, t)=>{
+      if (relationsMap.has(`${u}_${t}`)){
+        relationsResult = `${relationsResult}${relationsMap.get(`${u}_${t}`)},`
+      }
+      else{
+        relationsResult = `${relationsResult}0,`
+      }
+    });
     relationsResult = relationsResult.slice(0, - 1);  //去掉最後一個逗號
     relationsResult = `${relationsResult}\n`
   });
@@ -159,28 +166,28 @@ Promise.resolve()
 * @author Michael Hsu
 */
 
-.then(()=>{
-  console.log(`>> Output file to ${path}/relations.csv`);
-  let tweetsBiasResult = "";
+// .then(()=>{
+//   console.log(`>> Output file to ${path}/relations.csv`);
+//   let tweetsBiasResult = "";
 
-  usersMap.forEach((u)=>{
-    tweetsMap.forEach((value, t)=>{
-      let r = tweetsBiasMap.get(t);
-      tweetsBiasResult = `${tweetsBiasResult}${
-        r.t_retweeted_counts / t_retweeted_counts_total / tweetsBiasMap.size + 
-        r.t_mention_counts + 
-        r.t_mention_counts + 
-        r.t_url_counts + 
-        r.t_expression_counts + 
-        r.t_topic_counts},`
-    });
-    tweetsBiasResult = tweetsBiasResult.slice(0, - 1);  //去掉最後一個逗號
-    tweetsBiasResult = `${tweetsBiasResult}\n`
-  });
+//   usersMap.forEach((u)=>{
+//     tweetsMap.forEach((value, t)=>{
+//       let r = tweetsBiasMap.get(t);
+//       tweetsBiasResult = `${tweetsBiasResult}${
+//         r.t_retweeted_counts / t_retweeted_counts_total / tweetsBiasMap.size + 
+//         r.t_mention_counts + 
+//         r.t_mention_counts + 
+//         r.t_url_counts + 
+//         r.t_expression_counts + 
+//         r.t_topic_counts},`
+//     });
+//     tweetsBiasResult = tweetsBiasResult.slice(0, - 1);  //去掉最後一個逗號
+//     tweetsBiasResult = `${tweetsBiasResult}\n`
+//   });
 
-  return fs.writeFileAsync(`${path}/tweetsBias.csv`, tweetsBiasResult);
+//   return fs.writeFileAsync(`${path}/tweetsBias.csv`, tweetsBiasResult);
 
-})
+// })
 .then(()=>{
   console.log(`>> Output file to ${path}/tweetsBias.csv`);
 })

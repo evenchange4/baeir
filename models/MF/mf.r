@@ -4,7 +4,7 @@ matrix_factorization = function(M, P, Q, K, steps, alpha, beta){
   Q = t(Q)
 
   mu = mean(m)
-
+  e2 = 9999999
   for(step in 1:steps){
     for(i in 1:nrow(M)){
       for(j in 1:ncol(M)){
@@ -28,12 +28,16 @@ matrix_factorization = function(M, P, Q, K, steps, alpha, beta){
         }
       }
     }
-    print(step)
-    print(e)
-    write.table(P %*% Q,file="results/results.csv", row.names=FALSE, col.names=FALSE, sep=",", na="") # keeps the rownames
-    if(e < 0.0001){
+
+    if(e > e2){
       # write.table(P %*% Q,file="results/results.csv", row.names=FALSE, col.names=FALSE, sep=",", na="") # keeps the rownames
       break
+    }
+    else{
+      print(step)
+      print(e)
+      e2 = e
+      write.table(P %*% Q,file="results/results.csv", row.names=FALSE, col.names=FALSE, sep=",", na="") # keeps the rownames
     }
   }
   # print(P %*% Q)
