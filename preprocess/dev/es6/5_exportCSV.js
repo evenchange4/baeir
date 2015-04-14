@@ -5,6 +5,8 @@ import Promise from "bluebird";
 require("babel/register");
 import console from "gulp-util";
 import Path from "path";
+import mkdirp from "mkdirp";
+import moment from "moment";
 let fs = Promise.promisifyAll(require("fs"));
 
 // self project modules
@@ -17,7 +19,8 @@ import $relationExtract from "../libs/relationExtract";
 // variable
 const user_has_relations_count_limit = 5;
 const tweet_has_relations_count_limit = 5;
-const path = Path.join(__dirname, '/../../data/output');
+const timestamp = moment().format("YYYYMMDD_HH:MM:SS");
+const path = Path.join(__dirname, `/../../data/output/${timestamp}`);
 let relationsMap = new Map();
 let usersMap = new Map();
 let tweetsMap = new Map();
@@ -26,6 +29,9 @@ let tweetsBiasMap = new Map();
 let t_retweeted_counts_total = 0;
 
 Promise.resolve()
+.then(()=>{
+  return mkdirp(path);
+})
 .then(()=>{
   return $sequelize.sequelize.query($sql.Relation_Users_Retweets, null, { raw: true } );
 })
@@ -74,15 +80,15 @@ Promise.resolve()
 .then(()=>{
   let totalReport = "";
 
-  console.log(`>> # user_has_relations_count_limit = ${$params.user_has_relations_count_limit}`);
-  console.log(`>> # tweet_has_relations_count_limit = ${$params.tweet_has_relations_count_limit}`)
+  console.log(`>> # user_has_relations_count_limit = ${user_has_relations_count_limit}`);
+  console.log(`>> # tweet_has_relations_count_limit = ${tweet_has_relations_count_limit}`)
 
   console.log(`>> # Users = ${usersMap.size}`);
   console.log(`>> # Tweets = ${tweetsMap.size}`);
   console.log(`>> # Relations = ${relationsMap.size}`);
 
-  totalReport = `${totalReport} >> # user_has_relations_count_limit = ${$params.user_has_relations_count_limit} \n`;
-  totalReport = `${totalReport} >> # tweet_has_relations_count_limit = ${$params.tweet_has_relations_count_limit} \n`;
+  totalReport = `${totalReport} >> # user_has_relations_count_limit = ${user_has_relations_count_limit} \n`;
+  totalReport = `${totalReport} >> # tweet_has_relations_count_limit = ${tweet_has_relations_count_limit} \n`;
   totalReport = `${totalReport} >> # Users = ${usersMap.size} \n`;
   totalReport = `${totalReport} >> # Tweets = ${tweetsMap.size} \n`;
   totalReport = `${totalReport} >> # Relations = ${relationsMap.size} \n`;
