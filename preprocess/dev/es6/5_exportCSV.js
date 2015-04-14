@@ -20,7 +20,7 @@ import $relationExtract from "../libs/relationExtract";
 const user_has_relations_count_limit = 5;
 const tweet_has_relations_count_limit = 5;
 const timestamp = moment().format("YYYYMMDD_HH:MM:SS");
-const path = Path.join(__dirname, `/../../data/output/${timestamp}`);
+const path = Path.join(__dirname, `/../../../output/${timestamp}/preprocess`);
 let relationsMap = new Map();
 let usersMap = new Map();
 let tweetsMap = new Map();
