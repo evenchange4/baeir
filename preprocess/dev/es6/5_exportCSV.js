@@ -19,7 +19,7 @@ import $relationExtract from "../libs/relationExtract";
 // variable
 const user_has_relations_count_limit = 5;
 const tweet_has_relations_count_limit = 5;
-const timestamp = moment().format("YYYYMMDD_HH:MM:SS");
+const timestamp = moment().format("YYYYMMDD_HHmmss");
 const path = Path.join(__dirname, `/../../../output/${timestamp}/preprocess`);
 let relationsMap = new Map();
 let usersMap = new Map();
@@ -62,9 +62,9 @@ Promise.resolve()
       `${relation.uid}_${relation.retweeted_status_mid}`, 
       // tweetsMap.get(relation.retweeted_status_mid) * (relation.tweet_retweeted_by_user_count * 24*60*60) / (relation.user_has_tweets_count * relation.tweet_has_been_retweeted_count * $format.toSec(relation.avg_response_time))
       // tweetsMap.get(relation.retweeted_status_mid) / $format.toSec(relation.avg_response_time)
-      // tweetsMap.get(relation.retweeted_status_mid) /10 // good
-      usersMap.get(relation.uid).get(relation.retweeted_status_mid)
-      // (relation.tweet_retweeted_by_user_count)
+      // usersMap.get(relation.uid).get(relation.retweeted_status_mid) /10 // good
+      // (1 + Math.log(usersMap.get(relation.uid).get(relation.retweeted_status_mid) ) ) * ( 1 + Math.log(86400 / $format.toSec(relation.avg_response_time)) )
+      ( 1 + Math.log(86400 / $format.toSec(relation.avg_response_time)) )
       // 1 / $format.toSec(relation.avg_response_time)
       // (relation.tweet_retweeted_by_user_count * 24*60*60) / $format.toSec(relation.avg_response_time)
     );
