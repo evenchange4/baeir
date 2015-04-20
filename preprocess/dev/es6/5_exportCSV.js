@@ -17,8 +17,8 @@ import $params from "../../configs/parameters.json";
 import $relationExtract from "../libs/relationExtract";
 
 // variable
-const user_has_relations_count_limit = 5;
-const tweet_has_relations_count_limit = 5;
+const user_has_relations_count_limit = $params.user_has_relations_count_limit;
+const tweet_has_relations_count_limit = $params.tweet_has_relations_count_limit;
 const timestamp = moment().format("YYYYMMDD_HHmmss");
 const path = Path.join(__dirname, `/../../../output/${timestamp}/preprocess`);
 let relationsMap = new Map();

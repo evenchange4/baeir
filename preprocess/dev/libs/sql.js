@@ -78,8 +78,6 @@ SELECT \
   T.uid, \
   T.retweeted_uid, \
   T.retweeted_status_mid, \
-  T.user_has_tweets_count, \
-  T.tweet_has_been_retweeted_count, \
   T.tweet_retweeted_by_user_count, \
   T.avg_response_time, \
   T.t_retweeted_counts, \
@@ -105,8 +103,6 @@ FROM \
     R.uid, \
     T.uid AS "retweeted_uid", \
     R.retweeted_status_mid, \
-    R.user_has_tweets_count, \
-    R.tweet_has_been_retweeted_count, \
     R.tweet_retweeted_by_user_count, \
     R.avg_response_time, \
     T.retweeted_counts AS "t_retweeted_counts", \
@@ -124,8 +120,6 @@ FROM \
     SELECT \
       T.uid, \
       T.retweeted_status_mid, \
-      AVG(T.user_has_tweets_count) AS "user_has_tweets_count", \
-      AVG(T.tweet_has_been_retweeted_count) AS "tweet_has_been_retweeted_count", \
       COUNT(*) AS "tweet_retweeted_by_user_count", \
       AVG(T.response_time) AS "avg_response_time" \
     FROM \
@@ -133,16 +127,13 @@ FROM \
       SELECT \
         T.uid, \
         T.retweeted_status_mid, \
-        T.created_at - O.created_at AS "response_time", \
-        U.user_has_tweets_count, \
-        R.tweet_has_been_retweeted_count \
+        T.created_at - O.created_at AS "response_time"\
       FROM \
         "Tweets" AS T \
       INNER JOIN \
         ( \
         SELECT \
-          T.uid, \
-          COUNT(*) AS "user_has_tweets_count" \
+          T.uid\
         FROM \
           ( \
           SELECT \
@@ -159,16 +150,13 @@ FROM \
           ) AS T \
         GROUP BY \
           T.uid \
-        HAVING \
-          COUNT(*) > ${$params.user_has_tweets_count} \
         ) AS U \
       ON \
         U.uid = T.uid \
       INNER JOIN \
         ( \
         SELECT \
-          T.retweeted_status_mid, \
-          COUNT(*) AS "tweet_has_been_retweeted_count" \
+          T.retweeted_status_mid\
         FROM \
           ( \
           SELECT \
@@ -185,8 +173,6 @@ FROM \
           ) AS T \
         GROUP BY \
           T.retweeted_status_mid \
-        HAVING \
-          COUNT(*) > ${$params.tweet_has_been_retweeted_count} \
         ) AS R \
       ON \
         R.retweeted_status_mid = T.retweeted_status_mid \
