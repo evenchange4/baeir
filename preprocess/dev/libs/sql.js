@@ -73,46 +73,126 @@ FROM \
   ) AS U \
 `
 
-export const Relation_Users_Retweets = `\
-SELECT  \
-  R.uid, \
-  R.retweeted_status_mid, \
-  T.rtcount, \
-  R2.ucount \
+export const Relation_Users_Retweets = ` \
+SELECT \
+  T.uid, \
+  T.retweeted_uid, \
+  T.retweeted_status_mid, \
+  T.tweet_retweeted_by_user_count, \
+  T.avg_response_time, \
+  T.t_retweeted_counts, \
+  T.t_text_length, \
+  T.t_mention_counts, \
+  T.t_url_counts, \
+  T.t_expression_counts, \
+  T.t_topic_counts, \
+  T.t_isgeo, \
+  T.t_image, \
+  U.tweet_counts AS "u_tweet_counts", \
+  U.retweet_counts AS "u_retweet_counts", \
+  U.retweeted_counts AS "u_retweeted_counts", \
+  U.mention_counts AS "u_mention_counts", \
+  U.mentioned_counts AS "u_mentioned_counts", \
+  U.url_counts AS "u_url_counts", \
+  U.expression_counts AS "u_expression_counts", \
+  U.topic_counts AS "u_topic_counts", \
+  U.geo_counts AS "u_geo_counts" \
 FROM \
-  "Tweets" AS R \
-INNER JOIN \
   ( \
   SELECT \
-    t.uid, \
-    COUNT(t.retweeted_status_mid) AS "rtcount" \
+    R.uid, \
+    T.uid AS "retweeted_uid", \
+    R.retweeted_status_mid, \
+    R.tweet_retweeted_by_user_count, \
+    R.avg_response_time, \
+    T.retweeted_counts AS "t_retweeted_counts", \
+    T.text_length AS "t_text_length", \
+    T.mention_counts AS "t_mention_counts", \
+    T.url_counts AS "t_url_counts", \
+    T.expression_counts AS "t_expression_counts", \
+    T.topic_counts AS "t_topic_counts", \
+    T.isgeo AS "t_isgeo", \
+    T.image AS "t_image" \
   FROM \
-    "Tweets" AS t \
-  WHERE \
-    t."isOriginal" = false \
-  GROUP BY \
-    t.uid \
-  HAVING \
-    COUNT(t.retweeted_status_mid) > ${$params.userHasMoreThan_Tweets} \
+    "Tweets" AS T \
+  INNER JOIN \
+    ( \
+    SELECT \
+      T.uid, \
+      T.retweeted_status_mid, \
+      COUNT(*) AS "tweet_retweeted_by_user_count", \
+      AVG(T.response_time) AS "avg_response_time" \
+    FROM \
+      ( \
+      SELECT \
+        T.uid, \
+        T.retweeted_status_mid, \
+        T.created_at - O.created_at AS "response_time"\
+      FROM \
+        "Tweets" AS T \
+      INNER JOIN \
+        ( \
+        SELECT \
+          T.uid\
+        FROM \
+          ( \
+          SELECT \
+            B.uid, \
+            B.retweeted_status_mid \
+          FROM \
+            "Tweets" AS A, \
+            "Tweets" AS B \
+          WHERE \
+            A.mid = B.retweeted_status_mid \
+          GROUP BY \
+            B.uid, \
+            B.retweeted_status_mid \
+          ) AS T \
+        GROUP BY \
+          T.uid \
+        ) AS U \
+      ON \
+        U.uid = T.uid \
+      INNER JOIN \
+        ( \
+        SELECT \
+          T.retweeted_status_mid\
+        FROM \
+          ( \
+          SELECT \
+            B.uid, \
+            B.retweeted_status_mid \
+          FROM \
+            "Tweets" AS A, \
+            "Tweets" AS B \
+          WHERE \
+            A.mid = B.retweeted_status_mid \
+          GROUP BY \
+            B.uid, \
+            B.retweeted_status_mid \
+          ) AS T \
+        GROUP BY \
+          T.retweeted_status_mid \
+        ) AS R \
+      ON \
+        R.retweeted_status_mid = T.retweeted_status_mid \
+      INNER JOIN \
+        "Tweets" AS O \
+      ON \
+        T.retweeted_status_mid = O.mid \
+      ) AS T \
+    GROUP BY \
+      T.uid, \
+      T.retweeted_status_mid \
+    ORDER BY \
+      T.uid DESC, \
+      T.retweeted_status_mid DESC \
+    ) AS R \
+  ON \
+    R.retweeted_status_mid = t.mid \
   ) AS T \
-ON  \
-  T.uid = R.uid \
 INNER JOIN \
-  ( \
-  SELECT \
-    t.retweeted_status_mid, \
-    COUNT(t.uid) AS "ucount" \
-  FROM \
-    "Tweets" AS t \
-  WHERE \
-    t."isOriginal" = false \
-  GROUP BY \
-    t.retweeted_status_mid \
-  HAVING \
-    COUNT(t.uid) > ${$params.tweetHasBeenRetweetedMoreThan_Uwers} \
-  ) AS R2 \
-ON  \
-  R.retweeted_status_mid = R2.retweeted_status_mid \
-WHERE \
-  R."isOriginal" = false \
+  "Users" AS U \
+ON \
+  U.uid = T.retweeted_uid \
 `
