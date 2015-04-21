@@ -1,8 +1,8 @@
 #!/usr/bin/Rscript
 
-inputPath = "../../output/20150421_014727/preprocess/relations.csv"
-
-m = as.matrix(read.csv(inputPath, sep=",", header=FALSE))
+# ===============================================
+# Functions
+# ===============================================
 
 getTesters = function(m, numberOfTesters){
   numberOfUsers = nrow(m)
@@ -105,6 +105,17 @@ getAveragePrecision = function(numbersOfTesters, Times ,K){
   return(mean(precisions))
 }
 
+# ===============================================
+# Input
+# ===============================================
+
+inputPath = "../../output/20150421_014727/preprocess/relations.csv"
+m = as.matrix(read.csv(inputPath, sep=",", header=FALSE))
+
+# ===============================================
+# Testing
+# ===============================================
+
 precisions = c()
 for(k in 1:10){
   print(k)
@@ -112,5 +123,9 @@ for(k in 1:10){
   precisions = c(precisions, precision)
 }
 
+# ===============================================
+# Plot
+# ===============================================
+
 print(precisions)
-barplot(precisions, main="Popularity" , xlab="P@n", ylab="precision")
+barplot(precisions, main="Popularity", xlab="P@n", ylab="precision")
