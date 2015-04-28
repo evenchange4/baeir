@@ -6,6 +6,7 @@
 #
 try:
     import numpy
+    import sys
 except:
     print "This implementation requires the numpy module."
     exit(0)
@@ -25,21 +26,17 @@ except:
     the final matrices P and Q
 """
 def matrix_factorization(R, P, Q, K, steps=5000, alpha=0.0002, beta=0.02):
-    print(Q)
     Q = Q.T
-    print(Q)
     for step in xrange(steps):
+        print(step)
         for i in xrange(len(R)):
             for j in xrange(len(R[i])):
                 if R[i][j] > 0:
-                    # print(P[i,:])
-                    # print(Q[:,j])
-                    # print("\n")
                     eij = R[i][j] - numpy.dot(P[i,:],Q[:,j])
                     for k in xrange(K):
                         P[i][k] = P[i][k] + alpha * (2 * eij * Q[k][j] - beta * P[i][k])
                         Q[k][j] = Q[k][j] + alpha * (2 * eij * P[i][k] - beta * Q[k][j])
-        eR = numpy.dot(P,Q)
+        # eR = numpy.dot(P,Q)
         e = 0
         for i in xrange(len(R)):
             for j in xrange(len(R[i])):
@@ -47,6 +44,7 @@ def matrix_factorization(R, P, Q, K, steps=5000, alpha=0.0002, beta=0.02):
                     e = e + pow(R[i][j] - numpy.dot(P[i,:],Q[:,j]), 2)
                     for k in xrange(K):
                         e = e + (beta/2) * ( pow(P[i][k],2) + pow(Q[k][j],2) )
+        print(e)
         if e < 0.001:
             break
     return P, Q.T, step
@@ -54,30 +52,30 @@ def matrix_factorization(R, P, Q, K, steps=5000, alpha=0.0002, beta=0.02):
 ###############################################################################
 
 if __name__ == "__main__":
-    R = [
-         [5,3,0,1],
-         [4,0,0,1],
-         [1,1,0,5],
-         [1,0,0,4],
-         [0,1,5,4],
-        ]
+    #### read matrix.csv
+    R = []
+    filePath = sys.argv[1]
+    f = open(filePath, 'r')
+    for line in f:
+        temp = []
+        for e in line.split('\n')[0].split(','):
+            temp.append(float(e))
+        R.append(temp)
+    ###
 
     R = numpy.array(R)
+    print(R[1])
 
     N = len(R)
     M = len(R[0])
-    print(N, M)
 
-    K = 3
+    K = 25
 
     P = numpy.random.rand(N,K)
     Q = numpy.random.rand(M,K)
-    print(P)
-    print(len(P),len(P[0]))
-    print(Q)
-    print(len(Q),len(Q[0]))
 
-    nP, nQ, step= matrix_factorization(R, P, Q, K)
+    nP, nQ, step= matrix_factorization(R, P, Q, K, steps=5000, alpha=0.03, beta=0.02)
     nR = numpy.dot(nP, nQ.T)
     print(step)
+    print(R)
     print(nR)

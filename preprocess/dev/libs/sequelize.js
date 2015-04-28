@@ -1,13 +1,11 @@
-"use strict";
+// self project modules
+import fs from 'fs';
+import path from 'path';
+import Sequelize from 'sequelize';
+import Promise from 'bluebird';
 
 // self project modules
-import fs from "fs";
-import path from "path";
-import Sequelize from "sequelize";
-import Promise from "bluebird";
-
-// self project modules
-import $config from "../../configs/db.json";
+import $config from '../../configs/db.json';
 
 /**
 * 連接資料庫
@@ -45,7 +43,7 @@ fs
 Object
 .keys(db)
 .forEach((modelName)=>{
-  if (in$("associate", db[modelName])) {
+  if (in$('associate', db[modelName])) {
     db[modelName].associate(db);
   }
 });
@@ -63,7 +61,7 @@ let sync = (modelNames) =>{
       return db[modelName].sync({ force: $config.force });
     })
     .then(()=>{
-      resolve(">> [SYNC] Models sync Success");
+      resolve('>> [SYNC] Models sync Success');
     })
     .catch((error)=>{
       reject(error);

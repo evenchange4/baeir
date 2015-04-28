@@ -2,7 +2,7 @@
 
 // node_modules
 import Promise from "bluebird";
-require("babel/register");
+// require("babel/register");
 import console from "gulp-util";
 
 // self project modules

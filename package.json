@@ -1,0 +1,51 @@
+{
+  "name": "preprocess",
+  "version": "1.0.0",
+  "description": "",
+  "main": "",
+  "scripts": {
+    "2": "time babel-node --max-old-space-size=12192 preprocess/dev/es6/2_labelIsRetweeted.js",
+    "3": "time babel-node --max-old-space-size=12192 preprocess/dev/es6/3_extract.js",
+    "4": "time babel-node --max-old-space-size=12192 preprocess/dev/es6/4_checkImbalance.js",
+    "5": "time babel-node --max-old-space-size=12192 preprocess/dev/es6/5_exportCSV.js",
+    "234": "npm run 2 && npm run 3  && npm run 4",
+    "test": "mocha preprocess/dev/tests",
+    "db": "babel-node preprocess/dev/es6/0_db.js",
+    "1sample": "time babel-node --max-old-space-size=12192 preprocess/dev/es6/1_parseTweets.js data/sample.csv 10 10",
+    "1baeir": "time babel-node --max-old-space-size=12192 preprocess/dev/es6/1_parseTweets.js  '../../weibo dataset/raw/csv/week50.csv' 10 16",
+    "baeir": "npm run db && npm run 1baeir && npm run 234",
+    "local": "npm run db && npm run 1sample && npm run 234",
+    "r:p": "time Rscript models/popularity/popularity.r output/20150421_014727/preprocess/relations.csv",
+    "py:mf": "time python models/MF/reference/mf.py output/20150421_014727/preprocess/relations.csv"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "assert": "^1.3.0",
+    "async": "^0.9.0",
+    "babel": "^5.0.8",
+    "bluebird": "^2.9.21",
+    "cli-table": "^0.3.1",
+    "csv": "^0.4.1",
+    "csv-parse": "0.0.9",
+    "gulp": "^3.8.10",
+    "gulp-livescript": "^2.2.0",
+    "gulp-notify": "^2.0.1",
+    "gulp-util": "^3.0.4",
+    "line-by-line": "^0.1.3",
+    "line-reader": "^0.2.4",
+    "mkdirp": "^0.5.0",
+    "moment": "^2.10.2",
+    "pg": "^3.6.2",
+    "pg-hstore": "^2.3.1",
+    "q": "^1.1.1",
+    "sequelize": "^2.0.0-rc2"
+  },
+  "devDependencies": {
+    "babel-core": "^5.1.11",
+    "babel-eslint": "^3.0.1",
+    "babel-loader": "^5.0.0",
+    "esprima-fb": "^15001.1.0-dev-harmony-fb",
+    "jscs": "^1.12.0"
+  }
+}

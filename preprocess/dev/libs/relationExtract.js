@@ -2,7 +2,7 @@
 
 // node_modules
 import console from "gulp-util";
-require("babel/register");
+// require("babel/register");
 
 /**
 * Extract usersMap, tweetsMap From relationships, and filter
