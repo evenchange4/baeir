@@ -77,7 +77,7 @@ getTopK = function(matrix, K) {
 }
 
 getTesterAnswers = function(matrix, tester) {
-  answers = m[tester,]
+  answers = matrix[tester,]
   resultIndex = c()
   for (i in 1:length(answers)){
     if(answers[i] > 0){

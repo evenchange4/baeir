@@ -65,7 +65,9 @@ Promise.resolve()
       // tweetsMap.get(relation.retweeted_status_mid) / $format.toSec(relation.avg_response_time)
       // usersMap.get(relation.uid).get(relation.retweeted_status_mid) /10 // good
       // (1 + Math.log(usersMap.get(relation.uid).get(relation.retweeted_status_mid) ) ) * ( 1 + Math.log(86400 / $format.toSec(relation.avg_response_time)) )
-      (1 + Math.log(86400 / $format.toSec(relation.avg_response_time)))
+      // (1 + Math.log(86400 / $format.toSec(relation.avg_response_time)))
+
+      1
 
       // 1 / $format.toSec(relation.avg_response_time)
       // (relation.tweet_retweeted_by_user_count * 24*60*60) / $format.toSec(relation.avg_response_time)
