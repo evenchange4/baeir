@@ -1,4 +1,5 @@
 #!/usr/bin/Rscript
+args<-commandArgs(TRUE)
 
 # ===============================================
 # Functions
@@ -109,7 +110,8 @@ getAveragePrecision = function(numbersOfTesters, Times ,K){
 # Input
 # ===============================================
 
-inputPath = "../../output/20150421_014727/preprocess/relations.csv"
+inputPath = args[1]
+
 m = as.matrix(read.csv(inputPath, sep=",", header=FALSE))
 
 # ===============================================

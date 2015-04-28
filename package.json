@@ -14,7 +14,9 @@
     "1sample": "time babel-node --max-old-space-size=12192 preprocess/dev/es6/1_parseTweets.js data/sample.csv 10 10",
     "1baeir": "time babel-node --max-old-space-size=12192 preprocess/dev/es6/1_parseTweets.js  '../../weibo dataset/raw/csv/week50.csv' 10 16",
     "baeir": "npm run db && npm run 1baeir && npm run 234",
-    "local": "npm run db && npm run 1sample && npm run 234"
+    "local": "npm run db && npm run 1sample && npm run 234",
+    "r:p": "time Rscript models/popularity/popularity.r output/20150421_014727/preprocess/relations.csv",
+    "py:mf": "time python models/MF/reference/mf.py output/20150421_014727/preprocess/relations.csv"
   },
   "author": "",
   "license": "ISC",
