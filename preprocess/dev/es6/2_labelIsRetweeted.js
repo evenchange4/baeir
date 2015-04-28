@@ -1,12 +1,9 @@
-"use strict";
-
-// node_modules
-import Promise from "bluebird";
-import console from "gulp-util";
+import Promise from 'bluebird';
+import console from 'gulp-util';
 
 // self project modules
-import $sequelize from "../libs/sequelize";
-import * as $sql from "../libs/sql";
+import $sequelize from '../libs/sequelize';
+import * as $sql from '../libs/sql';
 
 // Model Schema
 const Tweets = $sequelize.Tweets;
@@ -19,15 +16,17 @@ const Tweets = $sequelize.Tweets;
 */
 
 Promise.resolve()
-.then(()=>{
+.then(()=> {
   // 1. 找出所有 retweeted_status_mid
-  return $sequelize.sequelize.query($sql.isRetweeted, null, { raw: true } );
+  return $sequelize.sequelize.query($sql.isRetweeted, null, { raw: true });
 })
-.then((data)=>{
+
+.then((data)=> {
   console.log(`>> number of data has been retweeted = ${data[0].length}`);
   return data[0];
 })
-.each((data)=>{
+
+.each((data)=> {
 
   /**
   * 是否被轉錄過 isRetweeted
@@ -44,13 +43,15 @@ Promise.resolve()
   let {retweeted_status_mid, retweeted_counts} = data;
 
   return Tweets.update(
-    { isRetweeted: true, retweeted_counts }, 
+    { isRetweeted: true, retweeted_counts },
     { where: {  mid: retweeted_status_mid } }
   );
 })
-.then(()=>{
-  console.log(">> Start async function processing ...");
+
+.then(()=> {
+  console.log('>> Start async function processing ...');
 })
-.catch((error)=>{
+
+.catch((error)=> {
   console.log(error);
 });

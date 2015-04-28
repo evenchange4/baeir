@@ -186,11 +186,11 @@ Promise.resolve()
 //     tweetsMap.forEach((value, t)=> {
 //       let r = tweetsBiasMap.get(t);
 //       tweetsBiasResult = `${tweetsBiasResult}${
-//         r.t_retweeted_counts / t_retweeted_counts_total / tweetsBiasMap.size + 
-//         r.t_mention_counts + 
-//         r.t_mention_counts + 
-//         r.t_url_counts + 
-//         r.t_expression_counts + 
+//         r.t_retweeted_counts / t_retweeted_counts_total / tweetsBiasMap.size +
+//         r.t_mention_counts +
+//         r.t_mention_counts +
+//         r.t_url_counts +
+//         r.t_expression_counts +
 //         r.t_topic_counts},`
 //     });
 //     tweetsBiasResult = tweetsBiasResult.slice(0, - 1);  //去掉最後一個逗號
