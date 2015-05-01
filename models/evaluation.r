@@ -55,6 +55,16 @@ answerPath = args[2]
 resultMatrix = as.matrix(read.csv(resultPath, sep=",", header=FALSE))
 answerMatrix = as.matrix(read.csv(answerPath, sep=",", header=FALSE))
 
-precision = getAveragePrecision(resultMatrix, answerMatrix, 10)
+precisions = c()
+for(k in 1:20){
+  print(k)
+  precision = getAveragePrecision(resultMatrix, answerMatrix, k)
+  precisions = c(precisions, precision)
+}
 
-print(precision)
+# ===============================================
+# Plot
+# ===============================================
+
+print(precisions)
+barplot(precisions, main="Precision @ topK", xlab="P@n", ylab="precision")
