@@ -37,6 +37,9 @@ getAveragePrecision = function(resultMatrix, answerMatrix, K){
     intersection = intersect(answers, topK)
     precision = length(intersection) / K
     precisions = c(precisions, precision)
+    # print(answers)
+    # print(topK)
+    # print(intersection)
   }
 
   return(mean(precisions))
@@ -52,6 +55,6 @@ answerPath = args[2]
 resultMatrix = as.matrix(read.csv(resultPath, sep=",", header=FALSE))
 answerMatrix = as.matrix(read.csv(answerPath, sep=",", header=FALSE))
 
-precision = getAveragePrecision(resultMatrix, answerMatrix, 20)
+precision = getAveragePrecision(resultMatrix, answerMatrix, 10)
 
 print(precision)
