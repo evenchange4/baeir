@@ -17,10 +17,14 @@ const user_has_relations_count_limit = $params.user_has_relations_count_limit;
 const tweet_has_relations_count_limit = $params.tweet_has_relations_count_limit;
 const timestamp = moment().format('YYYYMMDD_HHmmss');
 const path = Path.join(__dirname, `/../../../output/${timestamp}/preprocess`);
-let relationsMap = new Map();
+
 let usersMap = new Map();
 let tweetsMap = new Map();
-let tweetsBiasMap = new Map();
+// let tweetsBiasMap = new Map();
+
+let userList = [];
+let tweetList = [];
+let relationList = [];
 
 // let t_retweeted_counts_total = 0;
 
@@ -30,7 +34,7 @@ Promise.resolve()
 })
 
 .then(()=> {
-  return $sequelize.sequelize.query($sql.Relation_Users_Retweets, null, { raw: true } );
+  return $sequelize.sequelize.query($sql.Relation_Users_Retweets, null, { raw: true });
 })
 
 .then((data)=> {
@@ -44,7 +48,44 @@ Promise.resolve()
   usersMap = a.usersMap;
   tweetsMap = a.tweetsMap;
 
-  return relations;
+  relationList = relations;
+
+})
+
+/**
+* Output user list
+*
+* @author Michael Hsu
+*/
+
+.then(()=> {
+  let output = '';
+
+  usersMap.forEach((value, uid)=> {
+    userList.push(uid);
+    output = `${output}${uid}\n`;
+  });
+
+  return fs.writeFileAsync(`${path}/users.txt`, output);
+})
+
+/**
+* Output tweet list
+*
+* @author Michael Hsu
+*/
+
+.then(()=> {
+  console.log(`>> Output file to ${path}/users.txt`);
+
+  let output = '';
+
+  tweetsMap.forEach((value, mid)=> {
+    tweetList.push(mid);
+    output = `${output}${mid}\n`;
+  });
+
+  return fs.writeFileAsync(`${path}/tweets.txt`, output);
 })
 
 // .each((relation)=> {
@@ -56,29 +97,15 @@ Promise.resolve()
 //   // t_retweeted_counts_total = t_retweeted_counts_total + relation.t_retweeted_counts;
 //   return relation;
 // })
-.each((relation)=> {
-  if (usersMap.has(relation.uid) && tweetsMap.has(relation.retweeted_status_mid)) {
-    relationsMap.set(
-      `${relation.uid}_${relation.retweeted_status_mid}`,
-
-      // tweetsMap.get(relation.retweeted_status_mid) * (relation.tweet_retweeted_by_user_count * 24*60*60) / (relation.user_has_tweets_count * relation.tweet_has_been_retweeted_count * $format.toSec(relation.avg_response_time))
-      // tweetsMap.get(relation.retweeted_status_mid) / $format.toSec(relation.avg_response_time)
-      // usersMap.get(relation.uid).get(relation.retweeted_status_mid) /10 // good
-      // (1 + Math.log(usersMap.get(relation.uid).get(relation.retweeted_status_mid) ) ) * ( 1 + Math.log(86400 / $format.toSec(relation.avg_response_time)) )
-
-      // (1 + Math.log(86400 / $format.toSec(relation.avg_response_time)))
-
-      // 1
-
-      // usersMap.get(relation.uid).get(relation.retweeted_status_mid)
-
-      usersMap.get(relation.uid).get(relation.retweeted_status_mid) * (1 + Math.log(86400 / $format.toSec(relation.avg_response_time)))
-
-
-      // 1 / $format.toSec(relation.avg_response_time)
-      // (relation.tweet_retweeted_by_user_count * 24*60*60) / $format.toSec(relation.avg_response_time)
-    );
-  }
+.then(()=> {
+  relationList.forEach((relation)=> {
+    if ((userList.indexOf(relation.uid) > -1) && (tweetList.indexOf(relation.retweeted_status_mid) > -1)) {
+      usersMap.get(relation.uid).set(
+        relation.retweeted_status_mid,
+        usersMap.get(relation.uid).get(relation.retweeted_status_mid) * (1 + Math.log(86400 / $format.toSec(relation.avg_response_time)))
+      );
+    }
+  });
 })
 
 /**
@@ -93,63 +120,37 @@ Promise.resolve()
   console.log(`>> # user_has_relations_count_limit = ${user_has_relations_count_limit}`);
   console.log(`>> # tweet_has_relations_count_limit = ${tweet_has_relations_count_limit}`);
 
-  console.log(`>> # Users = ${usersMap.size}`);
-  console.log(`>> # Tweets = ${tweetsMap.size}`);
-  console.log(`>> # Relations = ${relationsMap.size}`);
+  console.log(`>> # Users = ${userList.length}`);
+  console.log(`>> # Tweets = ${tweetList.length}`);
 
   totalReport = `${totalReport} >> # user_has_relations_count_limit = ${user_has_relations_count_limit} \n`;
   totalReport = `${totalReport} >> # tweet_has_relations_count_limit = ${tweet_has_relations_count_limit} \n`;
-  totalReport = `${totalReport} >> # Users = ${usersMap.size} \n`;
-  totalReport = `${totalReport} >> # Tweets = ${tweetsMap.size} \n`;
-  totalReport = `${totalReport} >> # Relations = ${relationsMap.size} \n`;
+  totalReport = `${totalReport} >> # Users = ${userList.length} \n`;
+  totalReport = `${totalReport} >> # Tweets = ${tweetList.length} \n`;
 
   fs.writeFileAsync(`${path}/../README.md`, totalReport);
 })
 
 /**
-* Output user list
+* Output relation list csv
 *
 * @author Michael Hsu
 */
 
 .then(()=> {
-  let usersResult = '';
+  console.log(`>> Output file to ${path}/tweets.txt`);
 
-  usersMap.forEach((value, uid)=> {
-    usersResult = `${usersResult}${uid}\n`;
-    value.forEach((count, mid)=> {
-      usersResult = `${usersResult}${mid} ${count},`;
-    })
+  let result = '';
 
-    usersResult = usersResult.slice(0, -1);  //去掉最後一個逗號
-    usersResult = `${usersResult}\n`
+  usersMap.forEach((tweets, uid)=> {
+    tweets.forEach((value, mid)=> {
+      if ((userList.indexOf(uid) > -1) && (tweetList.indexOf(mid) > -1)) {
+        result = `${result}${userList.indexOf(uid) + 1},${tweetList.indexOf(mid) + 1},${value}\n`
+      }
+    });
   });
 
-  return fs.writeFileAsync(`${path}/users.txt`, usersResult);
-})
-
-/**
-* Output tweet list
-*
-* @author Michael Hsu
-*/
-
-.then(()=> {
-  console.log(`>> Output file to ${path}/users.txt`);
-
-  let tweetsResult = '';
-
-  tweetsMap.forEach((value, mid)=> {
-    tweetsResult = `${tweetsResult}${mid}\n`;
-    value.forEach((count, uid)=> {
-      tweetsResult = `${tweetsResult}${uid} ${count},`;
-    })
-
-    tweetsResult = tweetsResult.slice(0, -1);  //去掉最後一個逗號
-    tweetsResult = `${tweetsResult}\n`
-  });
-
-  return fs.writeFileAsync(`${path}/tweets.txt`, tweetsResult);
+  return fs.writeFileAsync(`${path}/answer.list.csv`, result);
 })
 
 /**
@@ -161,23 +162,24 @@ Promise.resolve()
 .then(()=> {
   console.log(`>> Output file to ${path}/tweets.txt`);
 
-  let relationsResult = '';
+  let result = '';
 
-  usersMap.forEach((value, u)=> {
-    tweetsMap.forEach((value, t)=> {
-      if (relationsMap.has(`${u}_${t}`)) {
-        relationsResult = `${relationsResult}${relationsMap.get(`${u}_${t}`)},`
+  userList.forEach((uid)=> {
+    tweetList.forEach((mid)=> {
+      if (usersMap.get(uid).get(mid)) {
+        result = `${result}${usersMap.get(uid).get(mid)},`
       }
       else {
-        relationsResult = `${relationsResult}0,`
+        result = `${result}0,`
       }
     });
 
-    relationsResult = relationsResult.slice(0, -1);  //去掉最後一個逗號
-    relationsResult = `${relationsResult}\n`
+    result = result.slice(0, -1);  //去掉最後一個逗號
+    result = `${result}\n`
+
   });
 
-  return fs.writeFileAsync(`${path}/relations.csv`, relationsResult);
+  return fs.writeFileAsync(`${path}/answer.matrix.csv`, result);
 })
 
 /**
