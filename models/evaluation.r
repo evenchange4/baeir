@@ -8,21 +8,14 @@ args<-commandArgs(TRUE)
 getTopK = function(matrix, tester, K) {
   resultIndex = c()
   for (k in 1:K){
-    resultIndex[k] = order(matrix[tester,],decreasing=T)[k]
+    resultIndex[k] = matrix[tester, k]
   }
   return(resultIndex)
 }
 
 getTesterAnswers = function(matrix, tester) {
   answers = matrix[tester,]
-  resultIndex = c()
-  for (i in 1:length(answers)){
-    if(answers[i] > 0){
-      resultIndex = c(resultIndex, i)
-    }
-    
-  }
-  return(resultIndex)
+  return(answers)
 }
 
 
@@ -37,9 +30,7 @@ getAveragePrecision = function(resultMatrix, answerMatrix, K){
     intersection = intersect(answers, topK)
     precision = length(intersection) / K
     precisions = c(precisions, precision)
-    # print(answers)
-    # print(topK)
-    # print(intersection)
+    print(intersection)
   }
 
   return(mean(precisions))
@@ -52,8 +43,8 @@ getAveragePrecision = function(resultMatrix, answerMatrix, K){
 resultPath = args[1]
 answerPath = args[2]
 
-resultMatrix = as.matrix(read.csv(resultPath, sep=",", header=FALSE))
-answerMatrix = as.matrix(read.csv(answerPath, sep=",", header=FALSE))
+resultMatrix = as.matrix(read.csv(resultPath, sep=" ", header=FALSE))
+answerMatrix = as.matrix(read.csv(answerPath, sep=" ", header=FALSE))
 
 precisions = c()
 for(k in 1:20){

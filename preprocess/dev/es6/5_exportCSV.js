@@ -20,6 +20,7 @@ const path = Path.join(__dirname, `/../../../output/${timestamp}/preprocess`);
 
 let usersMap = new Map();
 let tweetsMap = new Map();
+
 // let tweetsBiasMap = new Map();
 
 let userList = [];
@@ -66,7 +67,7 @@ Promise.resolve()
     output = `${output}${uid}\n`;
   });
 
-  return fs.writeFileAsync(`${path}/users.txt`, output);
+  // return fs.writeFile(`${path}/users.txt`, output);
 })
 
 /**
@@ -76,7 +77,7 @@ Promise.resolve()
 */
 
 .then(()=> {
-  console.log(`>> Output file to ${path}/users.txt`);
+  // console.log(`>> Output file to ${path}/users.txt`);
 
   let output = '';
 
@@ -85,7 +86,7 @@ Promise.resolve()
     output = `${output}${mid}\n`;
   });
 
-  return fs.writeFileAsync(`${path}/tweets.txt`, output);
+  // return fs.writeFile(`${path}/tweets.txt`, output);
 })
 
 // .each((relation)=> {
@@ -103,6 +104,7 @@ Promise.resolve()
       usersMap.get(relation.uid).set(
         relation.retweeted_status_mid,
         usersMap.get(relation.uid).get(relation.retweeted_status_mid) * (1 + Math.log(86400 / $format.toSec(relation.avg_response_time)))
+        // usersMap.get(relation.uid).get(relation.retweeted_status_mid)
       );
     }
   });
@@ -128,7 +130,7 @@ Promise.resolve()
   totalReport = `${totalReport} >> # Users = ${userList.length} \n`;
   totalReport = `${totalReport} >> # Tweets = ${tweetList.length} \n`;
 
-  fs.writeFileAsync(`${path}/../README.md`, totalReport);
+  fs.writeFile(`${path}/../README.md`, totalReport);
 })
 
 /**
@@ -138,19 +140,98 @@ Promise.resolve()
 */
 
 .then(()=> {
-  console.log(`>> Output file to ${path}/tweets.txt`);
+  console.log(`>> Output file to ${path}/answer.list.txt`);
 
   let result = '';
 
   usersMap.forEach((tweets, uid)=> {
     tweets.forEach((value, mid)=> {
       if ((userList.indexOf(uid) > -1) && (tweetList.indexOf(mid) > -1)) {
-        result = `${result}${userList.indexOf(uid) + 1},${tweetList.indexOf(mid) + 1},${value}\n`
+        result = `${result}${userList.indexOf(uid) + 1} ${tweetList.indexOf(mid) + 1} ${value}\n`
+      }
+      else {
+        usersMap.get(uid).delete(mid);
+      }
+    });
+
+    if (tweets.size <= 1) {
+      usersMap.delete(uid);
+    }
+  });
+
+  return fs.writeFileAsync(`${path}/answer.list.txt`, result);
+})
+
+/**
+* Training / Testing
+*
+* @author Michael Hsu
+*/
+
+.then(()=> {
+
+  console.log(`>> Output file to ${path}/[train] [test].list.txt`);
+
+  function shuffle(o) {
+    for (var j, x, i = o.length; i; j = Math.floor(Math.random() * i), x = o[--i], o[i] = o[j], o[j] = x);
+    return o;
+  };
+
+  let trainResult = '';
+  let testResult = '';
+
+  usersMap.forEach((tweets, uid)=> {
+    let size = tweets.size;
+    let testingSize = Math.ceil(size * 0.1);
+    let array = []
+
+    for (let i = 0; i < testingSize; i++) {
+      array.push(true);
+    }
+
+    for (let i = 0; i < (size - testingSize); i++) {
+      array.push(false);
+    }
+
+    shuffle(array);
+    let k = 0;
+    tweets.forEach((value, mid)=> {
+      if (array[k]) {
+        testResult = `${testResult}${userList.indexOf(uid) + 1} ${tweetList.indexOf(mid) + 1} ${value}\n`
+      }
+      else {
+        trainResult = `${trainResult}${userList.indexOf(uid) + 1} ${tweetList.indexOf(mid) + 1} ${value}\n`
+      }
+
+      k = k + 1;
+    });
+  });
+
+  fs.writeFileAsync(`${path}/train.list.txt`, trainResult);
+  fs.writeFileAsync(`${path}/test.list.txt`, testResult);
+})
+
+/**
+* Output all rank list
+*
+* @author Michael Hsu
+*/
+
+.then(()=> {
+  let result = '';
+
+  userList.forEach((uid, uindex) => {
+    tweetList.forEach((mid, mindex) => {
+      if (usersMap.get(uid).has(mid)) {
+        result = `${result}${uindex + 1} ${mindex + 1} ${usersMap.get(uid).get(mid)}\n`
+      }
+      else {
+        result = `${result}${uindex + 1} ${mindex + 1} 0\n`
       }
     });
   });
 
-  return fs.writeFileAsync(`${path}/answer.list.csv`, result);
+  fs.writeFileAsync(`${path}/test.rank.list.txt`, result);
 })
 
 /**
@@ -159,28 +240,28 @@ Promise.resolve()
 * @author Michael Hsu
 */
 
-.then(()=> {
-  console.log(`>> Output file to ${path}/tweets.txt`);
+// .then(()=> {
+//   console.log(`>> Output file to ${path}/tweets.txt`);
 
-  let result = '';
+//   let result = '';
 
-  userList.forEach((uid)=> {
-    tweetList.forEach((mid)=> {
-      if (usersMap.get(uid).get(mid)) {
-        result = `${result}${usersMap.get(uid).get(mid)},`
-      }
-      else {
-        result = `${result}0,`
-      }
-    });
+//   userList.forEach((uid)=> {
+//     tweetList.forEach((mid)=> {
+//       if (usersMap.get(uid).get(mid)) {
+//         result = `${result}${usersMap.get(uid).get(mid)},`
+//       }
+//       else {
+//         result = `${result}0,`
+//       }
+//     });
 
-    result = result.slice(0, -1);  //去掉最後一個逗號
-    result = `${result}\n`
+//     result = result.slice(0, -1);  //去掉最後一個逗號
+//     result = `${result}\n`
 
-  });
+//   });
 
-  return fs.writeFileAsync(`${path}/answer.matrix.csv`, result);
-})
+//   return fs.writeFile(`${path}/answer.matrix.csv`, result);
+// })
 
 /**
 * Output tweet bias csv
@@ -207,12 +288,17 @@ Promise.resolve()
 //     tweetsBiasResult = `${tweetsBiasResult}\n`
 //   });
 
-//   return fs.writeFileAsync(`${path}/tweetsBias.csv`, tweetsBiasResult);
+//   return fs.writeFile(`${path}/tweetsBias.csv`, tweetsBiasResult);
 
 // })
 
 .then(()=> {
-  console.log(`>> Output file to ${path}/tweetsBias.csv`);
+  fs.writeFile(`${path}/model.txt`, '');
+  fs.writeFile(`${path}/output.txt`, '');
+})
+
+.then(()=> {
+  console.log(`>> done!`);
 })
 
 .catch((error)=> {

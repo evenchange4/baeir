@@ -76,5 +76,31 @@ export default function relationExtract(relations, userLimit, tweetLimit) {
     }
   });
 
-  return {usersMap, tweetsMap};
+  // 5. 被影響的人
+  let userList = [];
+  let tweetList = [];
+
+  usersMap.forEach((value, uid)=> {
+    userList.push(uid);
+  });
+
+  tweetsMap.forEach((value, mid)=> {
+    tweetList.push(mid);
+  });
+
+  usersMap.forEach((tweets, uid)=> {
+    tweets.forEach((value, mid)=> {
+      // 已不再～
+      if (tweetList.indexOf(mid) === -1) {
+        usersMap.get(uid).delete(mid);
+      }
+    });
+
+    // 已不合乎數量
+    if (tweets.size <= 1) {
+      usersMap.delete(uid);
+    }
+  });
+
+  return { usersMap, tweetsMap };
 }

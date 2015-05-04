@@ -47,4 +47,4 @@ inputPath = args[1]
 outputPath = args[2]
 matrix = as.matrix(read.csv(inputPath, sep=",", header=FALSE))
 
-matrix_factorization(matrix=matrix, nfeature=10, steps=5000, alpha=0.005, beta=0.00002)
+matrix_factorization(matrix=matrix, nfeature=30, steps=5000, alpha=0.001, beta=0.00002)
