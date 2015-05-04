@@ -235,6 +235,47 @@ Promise.resolve()
 })
 
 /**
+* Output all rank list
+*
+* @author Michael Hsu
+*/
+
+.then(()=> {
+  let result = '';
+  let midArray = [];
+  let valueArray = [];
+
+  tweetList.forEach((mid, index) => {
+    midArray.push(index + 1);
+    valueArray.push(parseInt(tweetsMap.get(mid).size));
+  });
+
+  let sortArray = [];
+  let size = tweetList.length;
+  for (let s = 0; s < size; s++) {
+    let max = Math.max(...valueArray);
+    let maxIndex = valueArray.indexOf(max);
+    let maxMid = midArray[maxIndex];
+
+    sortArray.push(maxMid);
+    midArray.splice(maxIndex, 1);
+    valueArray.splice(maxIndex, 1);
+  }
+
+  result = sortArray.reduce((total, value) => {
+    return `${total} ${value}`
+  });
+
+  let totalResult = '';
+
+  for (var i = 0; i < userList.length; i++) {
+    totalResult = `${totalResult}${result}\n`
+  };
+
+  fs.writeFileAsync(`${path}/answer.popularity.txt`, totalResult);
+})
+
+/**
 * Output relation csv
 *
 * @author Michael Hsu

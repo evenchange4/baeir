@@ -30,7 +30,6 @@ getAveragePrecision = function(resultMatrix, answerMatrix, K){
     intersection = intersect(answers, topK)
     precision = length(intersection) / K
     precisions = c(precisions, precision)
-    print(intersection)
   }
 
   return(mean(precisions))
