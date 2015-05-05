@@ -218,20 +218,20 @@ Promise.resolve()
 */
 
 .then(()=> {
-  let result = '';
+  let wstream = fs.createWriteStream(`${path}/test.rank.list.txt`);
 
   userList.forEach((uid, uindex) => {
     tweetList.forEach((mid, mindex) => {
       if (usersMap.get(uid).has(mid)) {
-        result = `${result}${uindex + 1} ${mindex + 1} ${usersMap.get(uid).get(mid)}\n`
+        wstream.write(`${uindex + 1} ${mindex + 1} ${usersMap.get(uid).get(mid)}\n`);
       }
       else {
-        result = `${result}${uindex + 1} ${mindex + 1} 0\n`
+        wstream.write(`${uindex + 1} ${mindex + 1} 0\n`);
       }
     });
   });
 
-  fs.writeFileAsync(`${path}/test.rank.list.txt`, result);
+  wstream.end();
 })
 
 /**
