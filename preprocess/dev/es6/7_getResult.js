@@ -14,55 +14,42 @@ let array = [];
 
 Promise.resolve()
 .then(()=> {
-  return new Promise((resolve, reject)=> {
-    const lr = new LineByLineReader(`${filePath}/preprocess/output.rank.txt`, {skipEmptyLines: true });
-
-    lr.on('line', (line) => {
-      let value = line;
-      output.push(value);
-    });
-
-    lr.on('end', ()=> {
-      resolve('done output');
-    });
-  });
+  let temp = fs.readFileSync(`${filePath}/preprocess/output.rank.txt`, 'utf8');
+  output = temp.split('\n');
+  output.pop();
+  console.log(`>> ${filePath}/preprocess/output.rank.txt done!`);
 })
 
 .then(()=> {
-  return new Promise((resolve, reject)=> {
-    const lr = new LineByLineReader(`${filePath}/preprocess/test.rank.list.txt`, {skipEmptyLines: true });
-    let index = 0;
-    lr.on('line', (line) => {
-      let [uid, mid, value] = line.split(' ');
-      value = output[index];
+  let temp = fs.readFileSync(`${filePath}/README.md`, 'utf8');
+  let lines = temp.split('\n');
+  let nusers = lines[2].split(' ')[5];
+  let ntweets = lines[3].split(' ')[5];
 
-      if (typeof (array[uid]) === 'undefined') {
-        array[uid] = new Map();
-      }
+  for (let i = 0; i < nusers; i++) {
+    array[i] = [];
+    for (let j = 0; j < ntweets; j++) {
+      array[i][j] = output[ntweets * i + j];
+    }
+  }
 
-      array[uid].set(mid, value);
-      index = index + 1;
-    });
-
-    lr.on('end', ()=> {
-      resolve('done test');
-    });
-  });
+  console.log(`>> ${filePath}/README.md done!`);
 })
 
 .then(()=> {
   let resultArray = [];
-  array.forEach((tweetMap, uid)=> {
+  array.forEach((tweetList, uid)=> {
     let midArray = [];
     let valueArray = [];
-    tweetMap.forEach((value, mid)=> {
-      midArray.push(mid);
-      valueArray.push(parseFloat(value));
+    tweetList.forEach((value, index)=> {
+      let mid = index + 1;
+      midArray[index] = mid;
+      valueArray[index] = parseFloat(value);
     });
 
     let sortArray = [];
-    let size = tweetMap.size;
-    for (let s = 0; s < size; s++) {
+    console.log(uid)
+    for (let s = 0; s < 20; s++) {
       let max = Math.max(...valueArray);
       let maxIndex = valueArray.indexOf(max);
       let maxMid = midArray[maxIndex];

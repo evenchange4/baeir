@@ -1,0 +1,21 @@
+## Training 
+./../../Downloads/libmf-1.2/mf-train -l 0.005 -k 100 -t 3000 -r 0.05 -s 1 output/20150505_135743/preprocess/train.list.txt output/20150505_135743/preprocess/model.txt
+real tr_rmse = 0.0003
+
+## Testing RMSE
+./../../Downloads/libmf-1.2/mf-predict output/20150505_135743/preprocess/test.list.txt output/20150505_135743/preprocess/model.txt output/20150505_135743/preprocess/output.txt
+RMSE = 3.7172
+
+## Testing Rank
+./../../Downloads/libmf-1.2/mf-predict output/20150505_135743/preprocess/test.rank.list.txt output/20150505_135743/preprocess/model.txt output/20150505_135743/preprocess/output.rank.txt
+RMSE = 0.6493
+
+## Evalutaion
+babel-node preprocess/dev/es6/6_getAnswer.js output/20150505_135743/preprocess/answer.list.txt
+
+babel-node preprocess/dev/es6/7_getResult.js output/20150505_135743
+
+time Rscript models/evaluation.r output/20150505_135743/preprocess/result.txt output/20150505_135743/preprocess/answer.txt
+
+## Popularity
+time Rscript models/evaluation.r output/20150505_135743/preprocess/answer.popularity.txt output/20150505_135743/preprocess/answer.txt
