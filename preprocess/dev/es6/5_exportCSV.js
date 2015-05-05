@@ -221,14 +221,17 @@ Promise.resolve()
   let wstream = fs.createWriteStream(`${path}/test.rank.list.txt`);
 
   userList.forEach((uid, uindex) => {
+    let result = '';
     tweetList.forEach((mid, mindex) => {
       if (usersMap.get(uid).has(mid)) {
-        wstream.write(`${uindex + 1} ${mindex + 1} ${usersMap.get(uid).get(mid)}\n`);
+        result = `${result}${uindex + 1} ${mindex + 1} ${usersMap.get(uid).get(mid)}\n`
       }
       else {
-        wstream.write(`${uindex + 1} ${mindex + 1} 0\n`);
+        result = `${result}${uindex + 1} ${mindex + 1} 0\n`
       }
     });
+
+    wstream.write(result);
   });
 
   wstream.end();
