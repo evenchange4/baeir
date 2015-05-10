@@ -101,9 +101,14 @@ Promise.resolve()
 .then(()=> {
   relationList.forEach((relation)=> {
     if ((userList.indexOf(relation.uid) > -1) && (tweetList.indexOf(relation.retweeted_status_mid) > -1)) {
+      // let uid = relation.uid;
+      let retweetSize = tweetsMap.get(relation.retweeted_status_mid).size;
+      // let mid = relation.retweeted_status_mid;
+      // console.log({ uid, mid, retweetSize });
       usersMap.get(relation.uid).set(
         relation.retweeted_status_mid,
-        usersMap.get(relation.uid).get(relation.retweeted_status_mid) * (1 + Math.log(86400 / $format.toSec(relation.avg_response_time)))
+        retweetSize * (1 + Math.log(86400 / $format.toSec(relation.avg_response_time)))
+        // usersMap.get(relation.uid).get(relation.retweeted_status_mid) * (1 + Math.log(86400 / $format.toSec(relation.avg_response_time)))
         // usersMap.get(relation.uid).get(relation.retweeted_status_mid)
       );
     }

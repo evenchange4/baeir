@@ -54,12 +54,32 @@ getRMSE = function(testSet, matrix_svdResult){
   return (RMSE)
 }
 
+getTopK = function(matrix, tester, K) {
+  resultIndex = c()
+  for (k in 1:K){
+    resultIndex[k] = order(matrix[tester,],decreasing=T)[k]
+  }
+  return(resultIndex)
+}
+
+otuput = function(path, matrix, K) {
+  n_users = nrow(matrix)
+  outputMatrix = matrix(0, nrow=n_users, ncol=K)
+  for (i in 1:n_users) {
+    topK = getTopK(matrix, i, K)
+    outputMatrix[i,] = topK
+    # print(topK)
+    # output
+  }
+  return (outputMatrix)
+}
 # ===============================================
 # Input
 # ===============================================
 
 trainSetPath = args[1]
 testSetPath = args[2]
+outputPath = args[3]
 
 trainSet = as.matrix(read.csv(trainSetPath, sep=" ", header=FALSE))
 testSet = as.matrix(read.csv(testSetPath, sep=" ", header=FALSE))
@@ -77,14 +97,12 @@ for (i in 1:n_trainSet) {
   matrix_trainSet[user,tweet] = value
 }
 
-matrix_svdResult = getSVD(10, matrix_trainSet)
+matrix_svdResult = getSVD(20, matrix_trainSet)
 
 RMSE = getRMSE(testSet, matrix_svdResult)
 
 print(RMSE)
 
-# r = s$u %*% diag(s$d) %*% t(s$v)
+outputMatrix = otuput(outputPath, matrix_svdResult, K=20)
 
-# write.table(svd2matrix,file=outputPath, row.names=FALSE, col.names=FALSE, sep=" ", na="")
-
-# print(r)
+write.table(outputMatrix,file=outputPath, row.names=FALSE, col.names=FALSE, sep=" ", na="")
