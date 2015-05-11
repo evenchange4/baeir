@@ -20,6 +20,7 @@ const path = Path.join(__dirname, `/../../../output/${timestamp}/preprocess`);
 
 let usersMap = new Map();
 let tweetsMap = new Map();
+let relationsMap = new Map();
 
 // let tweetsBiasMap = new Map();
 
@@ -48,6 +49,7 @@ Promise.resolve()
 
   usersMap = a.usersMap;
   tweetsMap = a.tweetsMap;
+  relationsMap = a.relationsMap;
 
   relationList = relations;
 
@@ -152,7 +154,7 @@ Promise.resolve()
   usersMap.forEach((tweets, uid)=> {
     tweets.forEach((value, mid)=> {
       if ((userList.indexOf(uid) > -1) && (tweetList.indexOf(mid) > -1)) {
-        result = `${result}${userList.indexOf(uid) + 1} ${tweetList.indexOf(mid) + 1} ${value}\n`
+        result = `${result}${userList.indexOf(uid) + 1} ${tweetList.indexOf(mid) + 1} ${value}\n`;
       }
       else {
         usersMap.get(uid).delete(mid);
@@ -180,7 +182,7 @@ Promise.resolve()
   function shuffle(o) {
     for (var j, x, i = o.length; i; j = Math.floor(Math.random() * i), x = o[--i], o[i] = o[j], o[j] = x);
     return o;
-  };
+  }
 
   let trainResult = '';
   let testResult = '';
@@ -188,7 +190,7 @@ Promise.resolve()
   usersMap.forEach((tweets, uid)=> {
     let size = tweets.size;
     let testingSize = Math.ceil(size * 0.1);
-    let array = []
+    let array = [];
 
     for (let i = 0; i < testingSize; i++) {
       array.push(true);
@@ -202,10 +204,32 @@ Promise.resolve()
     let k = 0;
     tweets.forEach((value, mid)=> {
       if (array[k]) {
-        testResult = `${testResult}${userList.indexOf(uid) + 1} ${tweetList.indexOf(mid) + 1} ${value}\n`
+        testResult = `${testResult}${userList.indexOf(uid) + 1} ${tweetList.indexOf(mid) + 1} ${value}\n`;
       }
       else {
-        trainResult = `${trainResult}${userList.indexOf(uid) + 1} ${tweetList.indexOf(mid) + 1} ${value}\n`
+        let relation = relationsMap.get(`${uid}_${mid}`);
+
+        trainResult = `\
+${trainResult}\
+${userList.indexOf(uid) + 1} \
+${tweetList.indexOf(mid) + 1} \
+${value} \
+${relation.t_text_length} \
+${relation.t_mention_counts} \
+${relation.t_url_counts} \
+${relation.t_expression_counts} \
+${relation.t_topic_counts} \
+${relation.t_isgeo ? 1 : 0} \
+${relation.t_image ? 1 : 0} \
+${relation.u_tweet_counts} \
+${relation.u_retweet_counts} \
+${relation.u_retweeted_counts} \
+${relation.u_mention_counts} \
+${relation.u_mentioned_counts} \
+${relation.u_url_counts} \
+${relation.u_expression_counts} \
+${relation.u_topic_counts} \
+${relation.u_geo_counts}\n`;
       }
 
       k = k + 1;
@@ -229,10 +253,10 @@ Promise.resolve()
     let result = '';
     tweetList.forEach((mid, mindex) => {
       if (usersMap.get(uid).has(mid)) {
-        result = `${result}${uindex + 1} ${mindex + 1} ${usersMap.get(uid).get(mid)}\n`
+        result = `${result}${uindex + 1} ${mindex + 1} ${usersMap.get(uid).get(mid)}\n`;
       }
       else {
-        result = `${result}${uindex + 1} ${mindex + 1} 0\n`
+        result = `${result}${uindex + 1} ${mindex + 1} 0\n`;
       }
     });
 
@@ -271,13 +295,13 @@ Promise.resolve()
   }
 
   result = sortArray.reduce((total, value) => {
-    return `${total} ${value}`
+    return `${total} ${value}`;
   });
 
   let totalResult = '';
 
   for (var i = 0; i < userList.length; i++) {
-    totalResult = `${totalResult}${result}\n`
+    totalResult = `${totalResult}${result}\n`;
   };
 
   fs.writeFileAsync(`${path}/answer.popularity.txt`, totalResult);

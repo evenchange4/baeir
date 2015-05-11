@@ -4,6 +4,23 @@ args<-commandArgs(TRUE)
 # ===============================================
 # Functions
 # ===============================================
+getTopK = function(matrix, tester, K) {
+  resultIndex = c()
+  for (k in 1:K){
+    resultIndex[k] = order(matrix[tester,],decreasing=T)[k]
+  }
+  return(resultIndex)
+}
+
+otuput = function(path, matrix, K) {
+  n_users = nrow(matrix)
+  outputMatrix = matrix(0, nrow=n_users, ncol=K)
+  for (i in 1:n_users) {
+    topK = getTopK(matrix, i, K)
+    outputMatrix[i,] = topK
+  }
+  return (outputMatrix)
+}
 
 matrix_factorization = function(matrix, nfeature, steps, alpha, beta) {
   matrix_nrow = max(matrix[,1])
@@ -35,16 +52,20 @@ matrix_factorization = function(matrix, nfeature, steps, alpha, beta) {
       }
     }
     print(e)
-    write.table(P %*% Q,file=outputPath, row.names=FALSE, col.names=FALSE, sep=",", na="") # keeps the rownames
+    outputMatrix = otuput(outputPath, P %*% Q, K=20)
+    write.table(outputMatrix,file=outputPath, row.names=FALSE, col.names=FALSE, sep=" ", na="")
+    # write.table(P %*% Q,file=outputPath, row.names=FALSE, col.names=FALSE, sep=",", na="") # keeps the rownames
   }
 }
+
 
 # ===============================================
 # Input
 # ===============================================
 
-inputPath = args[1]
+trainSetPath = args[1]
 outputPath = args[2]
-matrix = as.matrix(read.csv(inputPath, sep=",", header=FALSE))
 
-matrix_factorization(matrix=matrix, nfeature=30, steps=5000, alpha=0.001, beta=0.00002)
+trainSet = as.matrix(read.csv(trainSetPath, sep=" ", header=FALSE))
+
+matrix_factorization(matrix=trainSet, nfeature=30, steps=5000, alpha=0.00001, beta=0.000002)

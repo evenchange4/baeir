@@ -17,8 +17,15 @@ import console from 'gulp-util';
 export default function relationExtract(relations, userLimit, tweetLimit) {
   let usersMap = new Map();
   let tweetsMap = new Map();
+  let relationsMap = new Map();
 
   relations.forEach((relation)=> {
+    // 0. relationsMap 記錄
+    relationsMap.set(
+      `${relation.uid}_${relation.retweeted_status_mid}`,
+      relation
+    );
+
     // 1. 計算 user 得轉推數量
     if (usersMap.has(relation.uid)) {
       if (usersMap.get(relation.uid).has(relation.retweeted_status_mid)) {
@@ -102,5 +109,5 @@ export default function relationExtract(relations, userLimit, tweetLimit) {
     }
   });
 
-  return { usersMap, tweetsMap };
+  return { usersMap, tweetsMap, relationsMap };
 }
