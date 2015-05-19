@@ -23,7 +23,7 @@ getAveragePrecision = function(resultMatrix, answerMatrix, K){
   precisions = c()
 
   numberOfUsers = nrow(resultMatrix)
-  print(numberOfUsers)
+  # print(numberOfUsers)
   for(user in 1:numberOfUsers){
     answers = getTesterAnswers(answerMatrix, user)
     topK = getTopK(resultMatrix, user ,K)
@@ -47,7 +47,7 @@ answerMatrix = as.matrix(read.csv(answerPath, sep=" ", header=FALSE))
 
 precisions = c()
 for(k in 1:20){
-  print(k)
+  # print(k)
   precision = getAveragePrecision(resultMatrix, answerMatrix, k)
   precisions = c(precisions, precision)
 }

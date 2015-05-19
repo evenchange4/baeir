@@ -23,6 +23,22 @@ otuput = function(path, matrix, K) {
 }
 
 matrix_factorization = function(matrix, nfeature, steps, alpha, beta) {
+  # to Matrix
+  n_users = max(trainSet[,'V1'])
+  n_tweets = max(trainSet[,'V2'])
+  n_trainSet = length(trainSet[,'V1'])
+
+  matrix_trainSet = matrix(0, nrow=n_users, ncol=n_tweets)
+
+  for (i in 1:n_trainSet) {
+    user  = trainSet[i,'V1']
+    tweet = trainSet[i,'V2']
+    value = trainSet[i,'V3']
+    matrix_trainSet[user,tweet] = value
+  }
+
+  # model
+
   matrix_nrow = max(matrix[,1])
   matrix_ncol = max(matrix[,2])
 
@@ -34,7 +50,7 @@ matrix_factorization = function(matrix, nfeature, steps, alpha, beta) {
     for (row in 1:nrow(matrix)){
       i = matrix[row,1]
       j = matrix[row,2]
-      value = matrix[row,3]
+      value = matrix[row,3] - mean(matrix_trainSet[i,]) - mean(matrix_trainSet[,j])
 
       # Explicit Features
       t_text_length = matrix[row,4]
@@ -56,7 +72,7 @@ matrix_factorization = function(matrix, nfeature, steps, alpha, beta) {
 
       # bias = t_text_length / 100 + t_mention_counts + t_url_counts + t_expression_counts + t_topic_counts + t_isgeo + t_image + u_tweet_counts + u_retweet_counts + u_retweeted_counts + u_mention_counts + u_mentioned_counts + u_url_counts + u_expression_counts + u_topic_counts + u_geo_counts
 
-      bias = t_text_length
+      bias = 0
 
       eij = value - (P[i,] %*% Q[,j]) + bias
       P[i,] = P[i,] + alpha * (2*eij*Q[,j] - beta*P[i,])
@@ -66,7 +82,7 @@ matrix_factorization = function(matrix, nfeature, steps, alpha, beta) {
     for (row in 1:nrow(matrix)) {
       i = matrix[row,1]
       j = matrix[row,2]
-      value = matrix[row,3]
+      value = matrix[row,3] - mean(matrix_trainSet[i,]) - mean(matrix_trainSet[,j])
 
       # Explicit Features
       t_text_length = matrix[row,4]
@@ -86,7 +102,7 @@ matrix_factorization = function(matrix, nfeature, steps, alpha, beta) {
       u_topic_counts = matrix[row,18]
       u_geo_counts = matrix[row,19]
 
-      bias = t_text_length
+      bias = 0
 
       e = e + ( value - P[i,] %*% Q[,j] + bias)^2
       for(k in 1:nfeature){
@@ -110,4 +126,4 @@ outputPath = args[2]
 
 trainSet = as.matrix(read.csv(trainSetPath, sep=" ", header=FALSE))
 
-matrix_factorization(matrix=trainSet, nfeature=30, steps=5000, alpha=0.000001, beta=0.000002)
+matrix_factorization(matrix=trainSet, nfeature=30, steps=5000, alpha=0.0001, beta=0.00002)
