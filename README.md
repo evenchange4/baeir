@@ -1,5 +1,7 @@
 ## Setup environment
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/evenchange4/baeir.svg)](https://greenkeeper.io/)
+
 - https://gist.github.com/evenchange4/b62a7d578678e52beaf5
 
 ## Preprocess
